@@ -24,7 +24,7 @@ public class MyRun {
 				Element childElement = (Element) child;
 				String nodeName = child.getNodeName();
 				if ("w:rPr".contentEquals(nodeName)) {
-					// ok
+					run.elements.add(MyRunProperties.create(childElement, level + 1));
 				} else if ("w:br".contentEquals(nodeName)) {
 					run.elements.add(MyBreak.create(childElement, level + 1));
 				} else if ("w:t".contentEquals(nodeName)) {
@@ -49,6 +49,21 @@ public class MyRun {
 			sb.append(element.toString());
 		}
 
+		String highlight = getHighlight();
+		if (highlight != null) {
+			return "<highlight " + highlight + ">" + sb.toString() + "</highlight>";
+		}
+
 		return sb.toString();
+	}
+
+	public String getHighlight() {
+		for (MyElement element : elements) {
+			String highlight = element.getHighlight();
+			if (highlight != null) {
+				return highlight;
+			}
+		}
+		return null;
 	}
 }

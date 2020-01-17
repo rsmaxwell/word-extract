@@ -1,5 +1,6 @@
 /bin/
 /target/
-/unzipped/
+/output/
+/working/
 /data/
 /python/

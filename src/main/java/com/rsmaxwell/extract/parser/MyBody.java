@@ -8,8 +8,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.rsmaxwell.extract.Extractor;
+import com.rsmaxwell.extract.Month;
 import com.rsmaxwell.extract.output.OutputDocument;
-import com.rsmaxwell.extract.output.OutputMonth;
 
 public class MyBody {
 
@@ -55,9 +55,10 @@ public class MyBody {
 
 				String string = element.toString();
 				try {
-					Extractor.getMonth(string);
+					Extractor.INSTANCE.month = Month.toInt(string);
+
 					sb.append("---[ ");
-					sb.append(element.toString());
+					sb.append(string);
 					sb.append(" ]------------------------------------------------------------------------");
 					sb.append(eol);
 				} catch (Exception e) {
@@ -73,28 +74,20 @@ public class MyBody {
 
 	public void toOutput(OutputDocument outputDocument) throws Exception {
 
-		OutputMonth outputMonth = null;
-
 		for (MyElement element : elements) {
 
 			if (element instanceof MyParagraph) {
 
 				String string = element.toString();
 				try {
-					int month = Extractor.getMonth(string);
-					outputMonth = new OutputMonth(month);
-					outputDocument.months.add(outputMonth);
+					Extractor.INSTANCE.month = Month.toInt(string);
 
 				} catch (Exception e) {
 				}
 
 			} else if (element instanceof MyTable) {
-				if (outputMonth == null) {
-					throw new Exception("outputMonth is null");
-				}
-
 				MyTable myTable = (MyTable) element;
-				myTable.toOutput(outputMonth);
+				myTable.toOutput(outputDocument);
 			} else {
 				throw new Exception("Unexpected element type: " + element.getClass().getSimpleName());
 			}

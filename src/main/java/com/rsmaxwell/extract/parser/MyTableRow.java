@@ -3,32 +3,17 @@ package com.rsmaxwell.extract.parser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.rsmaxwell.extract.Day;
+import com.rsmaxwell.extract.Extractor;
 import com.rsmaxwell.extract.output.OutputDay;
-import com.rsmaxwell.extract.output.OutputMonth;
+import com.rsmaxwell.extract.output.OutputDocument;
 
 public class MyTableRow {
-
-	static final String[] daynames = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-
-	static Pattern pattern;
-
-	static {
-		StringBuilder sb = new StringBuilder();
-		String separator = "";
-		for (String day : daynames) {
-			sb.append(separator);
-			sb.append(day);
-			separator = "|";
-		}
-		String regx = "^(" + sb.toString() + ")\\s+(.*)";
-		pattern = Pattern.compile(regx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	}
 
 	private ArrayList<MyTableColumn> columns = new ArrayList<MyTableColumn>();
 
@@ -65,9 +50,12 @@ public class MyTableRow {
 		String eol = System.getProperty("line.separator");
 
 		// Check the the day-of-the-month
-		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(1).isNumber())
-				&& (columns.get(2).isDivider())) {
-			return "---[ " + columns.get(1).toString() + " ]------------ " + eol;
+		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(2).isDivider())) {
+			try {
+				int dayOfMonth = columns.get(1).getDayOfMonth();
+				return "---[ " + dayOfMonth + " ]------------ " + eol;
+			} catch (Exception e) {
+			}
 		}
 
 		// Concatenate the block of text
@@ -80,7 +68,7 @@ public class MyTableRow {
 		StringBuilder sb2 = new StringBuilder();
 
 		// Check the the day-name
-		Matcher matcher = pattern.matcher(string);
+		Matcher matcher = Day.getMatcher(string);
 		if (matcher.find()) {
 			String day = matcher.group(1);
 			String text = matcher.group(2);
@@ -95,25 +83,28 @@ public class MyTableRow {
 		return sb2.toString();
 	}
 
-	public void toOutput(OutputMonth outputMonth) throws Exception {
+	public void toOutput(OutputDocument outputDocument) throws Exception {
 
 		// Check the the day-of-month
-		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(1).isNumber())
-				&& (columns.get(2).isDivider())) {
+		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(2).isDivider())) {
+			try {
+				Extractor.INSTANCE.day = columns.get(1).getDayOfMonth();
 
-			String string = columns.get(1).toString();
-			int day = Integer.parseInt(string);
+				OutputDay outputDay = new OutputDay();
+				outputDay.day = Extractor.INSTANCE.day;
+				outputDay.month = Extractor.INSTANCE.month;
+				outputDay.year = Extractor.INSTANCE.year;
+				outputDay.tag = Extractor.INSTANCE.tag;
 
-			OutputDay outputDay = new OutputDay();
-			outputDay.day = day;
+				outputDocument.days.add(outputDay);
+				return;
 
-			outputMonth.days.add(outputDay);
-
-			return;
+			} catch (Exception e) {
+			}
 		}
 
 		// Check there is at least one day in the given outputMonth
-		int size = outputMonth.days.size();
+		int size = outputDocument.days.size();
 		if (size <= 0) {
 			throw new Exception("The month does not contain any days");
 		}
@@ -137,14 +128,42 @@ public class MyTableRow {
 
 		// If the first line starts with the day-name, remove it
 		String line = lines.get(0);
-		Matcher matcher = pattern.matcher(line);
+		Matcher matcher = Day.getMatcher(line);
 		if (matcher.find()) {
+
+			String string = matcher.group(1);
+			int dayOfWeek = Day.toInt(string);
+			Day.check(Extractor.INSTANCE.year, Extractor.INSTANCE.month, Extractor.INSTANCE.day, dayOfWeek);
+
 			lines.set(0, matcher.group(2));
 		}
 
-		OutputDay outputDay = outputMonth.days.get(size - 1);
-		outputDay.lines.addAll(lines);
-		outputDay.notes.addAll(notes);
+		OutputDay outputDay = outputDocument.days.get(size - 1);
+
+		outputDay.line = buildLine(lines);
+		outputDay.notes = buildLine(notes);
 	}
 
+	private String buildLine(List<String> array) throws Exception {
+		String line = null;
+		String separator = " ";
+		for (int i = 0; i < array.size(); i++) {
+			String next = array.get(i);
+			if (next.length() == 0) {
+				separator = "</p><p>";
+			} else {
+				line = join(line, next, separator);
+				separator = " ";
+			}
+		}
+		return (line == null) ? null : "<p>" + line + "</p>";
+	}
+
+	private String join(String one, String two, String separator) throws Exception {
+		if (one == null) {
+			return two.trim();
+		}
+
+		return one.trim() + separator + two.trim();
+	}
 }

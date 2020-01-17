@@ -5,5 +5,5 @@ import java.util.List;
 
 public class OutputDocument {
 
-	public List<OutputMonth> months = new ArrayList<OutputMonth>();
+	public List<OutputDay> days = new ArrayList<OutputDay>();
 }

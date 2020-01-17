@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.rsmaxwell.extract.output.OutputMonth;
+import com.rsmaxwell.extract.output.OutputDocument;
 
 public class MyTable extends MyElement {
 
@@ -52,9 +52,9 @@ public class MyTable extends MyElement {
 		return sb.toString();
 	}
 
-	public void toOutput(OutputMonth outputMonth) throws Exception {
+	public void toOutput(OutputDocument outputDocument) throws Exception {
 		for (MyTableRow row : rows) {
-			row.toOutput(outputMonth);
+			row.toOutput(outputDocument);
 		}
 	}
 }

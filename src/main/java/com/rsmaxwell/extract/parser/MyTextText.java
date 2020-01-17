@@ -24,6 +24,12 @@ public class MyTextText implements MyNode {
 
 	@Override
 	public String toString() {
+
+		string = string.replace('\u2019', '\'');
+		string = string.replace('\u201C', '"');
+		string = string.replace('\u201D', '"');
+		string = string.replace("\u2026", "...");
+
 		return string;
 	}
 }

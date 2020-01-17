@@ -17,7 +17,7 @@ import org.apache.commons.cli.ParseException;
 
 public class App {
 
-	public static void main(String[] args) throws ParseException, IOException {
+	private static CommandLine getCommandLine(String[] args) throws ParseException {
 
 		// @formatter:off
 		Option version = Option.builder("v")
@@ -38,12 +38,36 @@ public class App {
 				            .hasArg()
 				            .desc("set the input word file")
 				            .build();
+		
+		Option year = Option.builder("y")
+				            .longOpt("year")
+				            .argName("year")
+				            .hasArg()
+				            .desc("set the year")
+				            .build();
+		
+		Option workingDir = Option.builder("w")
+	                        .longOpt("workingDir")
+	                        .argName("workingDir")
+	                        .hasArg()
+	                        .desc("set the working directory")
+	                        .build();
+		
+		Option outputDir = Option.builder("o")
+                            .longOpt("outputDir")
+                            .argName("outputDir")
+                            .hasArg()
+                            .desc("set the output directory")
+                            .build();
 		// @formatter:on
 
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
 		options.addOption(file);
+		options.addOption(year);
+		options.addOption(workingDir);
+		options.addOption(outputDir);
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line = parser.parse(options, args);
@@ -53,29 +77,61 @@ public class App {
 		} else if (line.hasOption('h')) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("extractor <OPTION> ", options);
-		} else {
-			File relative = new File("./unzipped");
-			String destDirName = relative.getCanonicalPath();
-			Path destDir = Paths.get(destDirName);
-
-			System.err.println("destDirName = " + destDirName);
-
-			if (Files.exists(destDir)) {
-				Files.walk(destDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-			}
-
-			if (Files.exists(destDir)) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-				}
-			}
-			Files.createDirectory(destDir);
-
-			String filename = line.getOptionValue("f");
-			Extractor extractor = new Extractor();
-			extractor.unzip(filename, destDirName);
-			extractor.parse(destDirName, "word");
+		} else if (!line.hasOption('y')) {
+			System.out.println("Missing required option -y | --year");
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("extractor <OPTION> ", options);
 		}
+
+		return line;
+	}
+
+	private static void clearWorkingDirectory(String relativeWorkingDirName) throws IOException {
+		File relativeWorkingDir = new File(relativeWorkingDirName);
+		String workingDirName = relativeWorkingDir.getCanonicalPath();
+		Path workingDir = Paths.get(workingDirName);
+
+		if (Files.exists(workingDir)) {
+			Files.walk(workingDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		}
+
+		if (Files.exists(workingDir)) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+		Files.createDirectory(workingDir);
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		CommandLine line = getCommandLine(args);
+
+		String outputDirName = line.getOptionValue("w", "./output");
+
+		String workingDirName = line.getOptionValue("w", "./working");
+		clearWorkingDirectory(workingDirName);
+
+		Extractor extractor = Extractor.INSTANCE;
+
+		String yearString = line.getOptionValue("y");
+		int year = Integer.parseInt(yearString);
+
+		String filename = line.getOptionValue("f");
+		extractor.unzip(filename, workingDirName);
+
+		extractor.tag = getBaseName(filename);
+		String outputFileName = outputDirName + "/" + extractor.tag + ".json";
+		extractor.toJson(workingDirName, outputFileName, year);
+	}
+
+	private static String getBaseName(String filename) {
+		File file = new File(filename);
+		String fileName = file.getName();
+		if (fileName.indexOf(".") > 0) {
+			fileName = fileName.substring(0, fileName.lastIndexOf("."));
+		}
+		return fileName;
 	}
 }

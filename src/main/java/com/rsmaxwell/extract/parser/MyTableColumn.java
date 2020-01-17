@@ -41,18 +41,25 @@ public class MyTableColumn {
 		return (toString().length() == 0);
 	}
 
-	public boolean isNumber() {
-		String strNum = toString();
+	public int getDayOfMonth() throws Exception {
 
-		if (strNum == null) {
-			return false;
+		String string = toString();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < string.length(); i++) {
+			char ch = string.charAt(i);
+			if (!Character.isDigit(ch)) {
+				break;
+			}
+			sb.append(ch);
 		}
-		try {
-			Integer.parseInt(strNum);
-		} catch (NumberFormatException nfe) {
-			return false;
+
+		String strNum = sb.toString();
+
+		if ((strNum == null) || (strNum.length() == 0)) {
+			throw new Exception("not a day-of-week: " + string);
 		}
-		return true;
+
+		return Integer.parseInt(strNum);
 	}
 
 	@Override

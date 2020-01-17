@@ -17,23 +17,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rsmaxwell.extract.output.OutputDocument;
 import com.rsmaxwell.extract.parser.MyDocument;
 
-public class Extractor {
+public enum Extractor {
 
-	static final String[] months = { "January", "February", "March", "April", "May", "June", "July", "August",
-			"September", "October", "November", "December" };
+	INSTANCE;
 
-	private int month;
-	private boolean inTable;
-	private int tableRow = 0, pageIndex = 0;
-
-	public static int getMonth(String text) throws Exception {
-		for (int i = 0; i < months.length; i++) {
-			if (months[i].equalsIgnoreCase(text)) {
-				return i;
-			}
-		}
-		throw new Exception("Unexpected month: " + text);
-	}
+	public int year;
+	public int month;
+	public int day;
+	public String tag;
 
 	public void unzip(String archive, String destDirName) throws IOException {
 		File destDir = new File(destDirName);
@@ -77,26 +68,25 @@ public class Extractor {
 		return destFile;
 	}
 
-	public void parse(String destDirName, String dir) {
+	public void toJson(String workingDirName, String outputFileName, int year) throws Exception {
 
-		try {
-			String filename = destDirName + "/" + dir + "/document.xml";
+		String filename = workingDirName + "/word/document.xml";
+		File outputFile = new File(outputFileName);
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(filename);
+		this.year = year;
 
-			doc.getDocumentElement().normalize();
-			Element root = doc.getDocumentElement();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(filename);
 
-			MyDocument document = MyDocument.create(root, 0);
-			OutputDocument outputDocument = document.toOutput();
+		doc.getDocumentElement().normalize();
+		Element root = doc.getDocumentElement();
 
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(System.out, outputDocument);
+		MyDocument document = MyDocument.create(root, 0);
+		OutputDocument outputDocument = document.toOutput();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, outputDocument);
+
 	}
 }
