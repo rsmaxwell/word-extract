@@ -73,7 +73,12 @@ public class App {
 		CommandLine line = parser.parse(options, args);
 
 		if (line.hasOption("version")) {
-			System.out.println("version: 0.0.1");
+			System.out.println("version:   " + Version.version());
+			System.out.println("buildDate: " + Version.buildDate());
+			System.out.println("gitCommit: " + Version.gitCommit());
+			System.out.println("gitBranch: " + Version.gitBranch());
+			System.out.println("gitURL:    " + Version.gitURL());
+
 		} else if (line.hasOption('h')) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("extractor <OPTION> ", options);
