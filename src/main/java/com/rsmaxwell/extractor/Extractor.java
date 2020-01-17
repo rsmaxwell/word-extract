@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract;
+package com.rsmaxwell.extractor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rsmaxwell.extract.output.OutputDocument;
-import com.rsmaxwell.extract.parser.MyDocument;
+import com.rsmaxwell.extractor.output.OutputDocument;
+import com.rsmaxwell.extractor.parser.MyDocument;
 
 public enum Extractor {
 

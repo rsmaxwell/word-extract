@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract.output;
+package com.rsmaxwell.extractor.output;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

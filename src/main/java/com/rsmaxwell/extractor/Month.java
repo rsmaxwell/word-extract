@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract;
+package com.rsmaxwell.extractor;
 
 public class Month {
 

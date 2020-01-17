@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract.parser;
+package com.rsmaxwell.extractor.parser;
 
 import java.util.ArrayList;
 import java.util.List;

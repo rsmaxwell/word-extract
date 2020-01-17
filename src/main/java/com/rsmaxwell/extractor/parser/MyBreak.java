@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract.parser;
+package com.rsmaxwell.extractor.parser;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

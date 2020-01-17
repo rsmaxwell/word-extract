@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract;
+package com.rsmaxwell.extractor;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

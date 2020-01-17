@@ -1,4 +1,4 @@
-package com.rsmaxwell.extract.parser;
+package com.rsmaxwell.extractor.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.rsmaxwell.extract.Day;
-import com.rsmaxwell.extract.Extractor;
-import com.rsmaxwell.extract.output.OutputDay;
-import com.rsmaxwell.extract.output.OutputDocument;
+import com.rsmaxwell.extractor.Day;
+import com.rsmaxwell.extractor.Extractor;
+import com.rsmaxwell.extractor.output.OutputDay;
+import com.rsmaxwell.extractor.output.OutputDocument;
 
 public class MyTableRow {
 
