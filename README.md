@@ -1,1 +1,1 @@
-# word-extract
+# extractor
