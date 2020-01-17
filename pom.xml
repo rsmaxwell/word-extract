@@ -33,4 +33,32 @@
 		</dependency>
 	</dependencies>
 
+	<repositories>
+		<repository>
+			<id>snapshots</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/snapshots</url>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>build</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/build</url>
+			<releases>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>build</id>
+			<url>https://server.rsmaxwell.co.uk/archiva/repository/build</url>
+		</repository>
+	</distributionManagement>
+
 </project>
