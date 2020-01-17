@@ -29,6 +29,18 @@ public class MyRunProperties extends MyElement {
 					// ok
 				} else if ("w:rFonts".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:sz".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:szCs".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:b".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:u".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:color".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:shd".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
