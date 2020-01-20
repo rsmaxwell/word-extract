@@ -87,6 +87,5 @@ public enum Extractor {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, outputDocument);
-
 	}
 }
