@@ -8,10 +8,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.rsmaxwell.diaryjson.OutputDay;
+import com.rsmaxwell.diaryjson.OutputDocument;
 import com.rsmaxwell.extractor.Day;
 import com.rsmaxwell.extractor.Extractor;
-import com.rsmaxwell.extractor.output.OutputDay;
-import com.rsmaxwell.extractor.output.OutputDocument;
 
 public class MyTableRow {
 
