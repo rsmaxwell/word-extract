@@ -31,6 +31,8 @@ public class MyRun {
 					run.elements.add(MyText.create(childElement, level + 1));
 				} else if ("w:tab".contentEquals(nodeName)) {
 					run.elements.add(MyTab.create(childElement, level + 1));
+				} else if ("w:lastRenderedPageBreak".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
