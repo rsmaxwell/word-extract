@@ -45,6 +45,8 @@ public class MyRunProperties extends MyElement {
 					// ok
 				} else if ("w:kern".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:lang".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
