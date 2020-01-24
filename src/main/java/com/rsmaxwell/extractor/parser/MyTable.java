@@ -27,10 +27,12 @@ public class MyTable extends MyElement {
 				String nodeName = child.getNodeName();
 				if ("w:tblPr".contentEquals(nodeName)) {
 					// ok
-				} else if ("w:tblGrid".contentEquals(nodeName)) {
-					// ok
 				} else if ("w:tr".contentEquals(nodeName)) {
 					table.rows.add(MyTableRow.create(childElement, level + 1));
+				} else if ("w:tblGrid".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
