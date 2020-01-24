@@ -7,6 +7,11 @@ public class Version {
 		return "<EXTRACTOR_VERSION>";
 	}
 
+	// buildID function
+	public static String buildID() {
+		return "<BUILD_ID>";
+	}
+
 	// buildDate function
 	public static String buildDate() {
 		return "<BUILD_DATE>";

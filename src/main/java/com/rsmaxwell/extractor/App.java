@@ -32,9 +32,9 @@ public class App {
 				            .desc("show program help")
 				            .build();
 		
-		Option file = Option.builder("f")
-				            .longOpt("file")
-				            .argName("file")
+		Option inputFile = Option.builder("i")
+				            .longOpt("inputFile")
+				            .argName("inputFile")
 				            .hasArg()
 				            .desc("set the input word file")
 				            .build();
@@ -53,27 +53,28 @@ public class App {
 	                        .desc("set the working directory")
 	                        .build();
 		
-		Option outputDir = Option.builder("o")
-                            .longOpt("outputDir")
-                            .argName("outputDir")
+		Option outputFile = Option.builder("o")
+                            .longOpt("outputFile")
+                            .argName("outputFile")
                             .hasArg()
-                            .desc("set the output directory")
+                            .desc("set the output file")
                             .build();
 		// @formatter:on
 
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
-		options.addOption(file);
+		options.addOption(inputFile);
 		options.addOption(year);
 		options.addOption(workingDir);
-		options.addOption(outputDir);
+		options.addOption(outputFile);
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line = parser.parse(options, args);
 
 		if (line.hasOption("version")) {
 			System.out.println("version:   " + Version.version());
+			System.out.println("buildID:   " + Version.buildID());
 			System.out.println("buildDate: " + Version.buildDate());
 			System.out.println("gitCommit: " + Version.gitCommit());
 			System.out.println("gitBranch: " + Version.gitBranch());
@@ -113,21 +114,21 @@ public class App {
 
 		CommandLine line = getCommandLine(args);
 
-		String outputDirName = line.getOptionValue("w", "./output");
+		String inputFilename = line.getOptionValue("i");
+
+		String basename = getBaseName(inputFilename);
+		String outputFileName = line.getOptionValue("o", "./output/" + basename + ".json");
 
 		String workingDirName = line.getOptionValue("w", "./working");
 		clearWorkingDirectory(workingDirName);
 
 		Extractor extractor = Extractor.INSTANCE;
+		extractor.tag = basename;
 
 		String yearString = line.getOptionValue("y");
 		int year = Integer.parseInt(yearString);
+		extractor.unzip(inputFilename, workingDirName);
 
-		String filename = line.getOptionValue("f");
-		extractor.unzip(filename, workingDirName);
-
-		extractor.tag = getBaseName(filename);
-		String outputFileName = outputDirName + "/" + extractor.tag + ".json";
 		extractor.toJson(workingDirName, outputFileName, year);
 	}
 
