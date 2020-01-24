@@ -33,6 +33,8 @@ public class MyParagraph extends MyElement {
 					// ok
 				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:hyperlink".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
