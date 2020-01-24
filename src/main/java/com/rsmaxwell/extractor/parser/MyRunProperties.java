@@ -41,6 +41,8 @@ public class MyRunProperties extends MyElement {
 					// ok
 				} else if ("w:shd".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:bCs".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
