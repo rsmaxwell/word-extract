@@ -33,6 +33,8 @@ public class MyBody {
 					body.elements.add(MyTable.create(childElement, level + 1));
 				} else if ("w:sectPr".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
