@@ -2,6 +2,8 @@ package com.rsmaxwell.extractor.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,21 +46,16 @@ public class MyTableColumn {
 	public int getDayOfMonth() throws Exception {
 
 		String string = toString();
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < string.length(); i++) {
-			char ch = string.charAt(i);
-			if (!Character.isDigit(ch)) {
-				break;
-			}
-			sb.append(ch);
-		}
 
-		String strNum = sb.toString();
+		String pattern = "([^\\d]*)(\\d+)([^\\d]*)";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(string);
 
-		if ((strNum == null) || (strNum.length() == 0)) {
+		if (!m.find()) {
 			throw new Exception("not a day-of-week: " + string);
 		}
 
+		String strNum = m.group(2);
 		return Integer.parseInt(strNum);
 	}
 
