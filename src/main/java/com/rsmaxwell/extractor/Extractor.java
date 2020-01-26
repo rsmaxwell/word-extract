@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rsmaxwell.diaryjson.OutputDay;
 import com.rsmaxwell.diaryjson.OutputDocument;
 import com.rsmaxwell.extractor.parser.MyDocument;
 
@@ -24,7 +25,7 @@ public enum Extractor {
 	public int year;
 	public int month;
 	public int day;
-	public String tag;
+	public String page;
 
 	public void unzip(String archive, String destDirName) throws IOException {
 		File destDir = new File(destDirName);
@@ -68,16 +69,15 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String workingDirName, String outputFileName, int year) throws Exception {
+	public void toJson(String workingDirName, File outputPageDir, File outputDayDir, int year) throws Exception {
 
-		String filename = workingDirName + "/word/document.xml";
-		File outputFile = new File(outputFileName);
+		String inputFilename = workingDirName + "/word/document.xml";
 
 		this.year = year;
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document doc = builder.parse(filename);
+		Document doc = builder.parse(inputFilename);
 
 		doc.getDocumentElement().normalize();
 		Element root = doc.getDocumentElement();
@@ -86,6 +86,26 @@ public enum Extractor {
 		OutputDocument outputDocument = document.toOutput();
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, outputDocument);
+		for (OutputDay day : outputDocument.days) {
+			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.page);
+			File outputFile = new File(outputDayDir, filename);
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, day);
+
+			File pageFile = new File(outputPageDir, day.page);
+			touch(pageFile);
+		}
+	}
+
+	public static void touch(File file) throws IOException {
+		long timestamp = System.currentTimeMillis();
+		touch(file, timestamp);
+	}
+
+	public static void touch(File file, long timestamp) throws IOException {
+		if (!file.exists()) {
+			new FileOutputStream(file).close();
+		}
+
+		file.setLastModified(timestamp);
 	}
 }

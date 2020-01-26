@@ -36,15 +36,15 @@ public class App {
 				            .longOpt("inputFile")
 				            .argName("inputFile")
 				            .hasArg()
-				            .desc("set the input word file")
+				            .desc("set the input word file (*.docx)")
 				            .build();
 		
-		Option year = Option.builder("y")
-				            .longOpt("year")
-				            .argName("year")
-				            .hasArg()
-				            .desc("set the year")
-				            .build();
+		Option outputFile = Option.builder("o")
+                            .longOpt("outputDir")
+                            .argName("outputDir")
+                            .hasArg()
+                            .desc("set the output dir")
+                            .build();
 		
 		Option workingDir = Option.builder("w")
 	                        .longOpt("workingDir")
@@ -53,12 +53,12 @@ public class App {
 	                        .desc("set the working directory")
 	                        .build();
 		
-		Option outputFile = Option.builder("o")
-                            .longOpt("outputFile")
-                            .argName("outputFile")
-                            .hasArg()
-                            .desc("set the output file")
-                            .build();
+		Option year = Option.builder("y")
+				            .longOpt("year")
+				            .argName("year")
+				            .hasArg()
+				            .desc("set the year")
+				            .build();
 		// @formatter:on
 
 		Options options = new Options();
@@ -116,20 +116,23 @@ public class App {
 
 		String inputFilename = line.getOptionValue("i");
 
-		String basename = getBaseName(inputFilename);
-		String outputFileName = line.getOptionValue("o", "./output/" + basename + ".json");
+		String outputDirName = line.getOptionValue("o", "./output");
+		File outputPageDir = new File(outputDirName, "pages");
+		outputPageDir.mkdirs();
+		File outputDayDir = new File(outputDirName, "days");
+		outputDayDir.mkdirs();
 
 		String workingDirName = line.getOptionValue("w", "./working");
 		clearWorkingDirectory(workingDirName);
 
 		Extractor extractor = Extractor.INSTANCE;
-		extractor.tag = basename;
+		extractor.page = getBaseName(inputFilename);
 
 		String yearString = line.getOptionValue("y");
 		int year = Integer.parseInt(yearString);
 		extractor.unzip(inputFilename, workingDirName);
 
-		extractor.toJson(workingDirName, outputFileName, year);
+		extractor.toJson(workingDirName, outputPageDir, outputDayDir, year);
 	}
 
 	private static String getBaseName(String filename) {

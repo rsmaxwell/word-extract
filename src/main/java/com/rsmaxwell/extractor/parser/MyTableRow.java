@@ -94,7 +94,7 @@ public class MyTableRow {
 				outputDay.day = Extractor.INSTANCE.day;
 				outputDay.month = Extractor.INSTANCE.month;
 				outputDay.year = Extractor.INSTANCE.year;
-				outputDay.tag = Extractor.INSTANCE.tag;
+				outputDay.page = Extractor.INSTANCE.page;
 
 				outputDocument.days.add(outputDay);
 				return;
