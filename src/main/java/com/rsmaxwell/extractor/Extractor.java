@@ -87,7 +87,13 @@ public enum Extractor {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (OutputDay day : outputDocument.days) {
+
 			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.page);
+
+			if (day.line == null) {
+				throw new Exception("null line found in day: " + filename);
+			}
+
 			File outputFile = new File(outputDayDir, filename);
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, day);
 
