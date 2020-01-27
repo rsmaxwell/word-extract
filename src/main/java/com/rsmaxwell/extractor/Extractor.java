@@ -90,7 +90,7 @@ public enum Extractor {
 
 			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.page) + ".json";
 
-			if (day.line == null) {
+			if (day.html == null) {
 				throw new Exception("null line found in day: " + filename);
 			}
 

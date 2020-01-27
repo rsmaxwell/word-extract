@@ -140,7 +140,7 @@ public class MyTableRow {
 
 		OutputDay outputDay = outputDocument.days.get(size - 1);
 
-		outputDay.line = buildLine(lines);
+		outputDay.html = buildLine(lines);
 		outputDay.notes = buildLine(notes);
 	}
 
