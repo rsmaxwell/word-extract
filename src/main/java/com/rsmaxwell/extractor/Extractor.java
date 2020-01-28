@@ -25,7 +25,8 @@ public enum Extractor {
 	public int year;
 	public int month;
 	public int day;
-	public String page;
+	public String order;
+	public String reference;
 
 	public void unzip(String archive, String destDirName) throws IOException {
 		File destDir = new File(destDirName);
@@ -88,7 +89,7 @@ public enum Extractor {
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (OutputDay day : outputDocument.days) {
 
-			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.page) + ".json";
+			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.order) + ".json";
 
 			if (day.html == null) {
 				throw new Exception("null line found in day: " + filename);
@@ -97,7 +98,7 @@ public enum Extractor {
 			File outputFile = new File(outputDayDir, filename);
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, day);
 
-			File pageFile = new File(outputPageDir, day.page);
+			File pageFile = new File(outputPageDir, day.reference);
 			touch(pageFile);
 		}
 	}

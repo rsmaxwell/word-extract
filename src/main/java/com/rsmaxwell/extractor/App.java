@@ -126,7 +126,8 @@ public class App {
 		clearWorkingDirectory(workingDirName);
 
 		Extractor extractor = Extractor.INSTANCE;
-		extractor.page = getBaseName(inputFilename);
+		extractor.order = getBaseName(inputFilename);
+		extractor.reference = getBaseName(inputFilename);
 
 		String yearString = line.getOptionValue("y");
 		int year = Integer.parseInt(yearString);
