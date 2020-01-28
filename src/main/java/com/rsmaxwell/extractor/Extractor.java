@@ -14,7 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rsmaxwell.diaryjson.OutputDay;
+import com.rsmaxwell.diaryjson.Fragment;
 import com.rsmaxwell.diaryjson.OutputDocument;
 import com.rsmaxwell.extractor.parser.MyDocument;
 
@@ -87,7 +87,7 @@ public enum Extractor {
 		OutputDocument outputDocument = document.toOutput();
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		for (OutputDay day : outputDocument.days) {
+		for (Fragment day : outputDocument.days) {
 
 			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.order) + ".json";
 

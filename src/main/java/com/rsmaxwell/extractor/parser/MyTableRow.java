@@ -9,7 +9,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.rsmaxwell.diaryjson.Day;
-import com.rsmaxwell.diaryjson.OutputDay;
+import com.rsmaxwell.diaryjson.Fragment;
 import com.rsmaxwell.diaryjson.OutputDocument;
 import com.rsmaxwell.extractor.Extractor;
 
@@ -90,7 +90,7 @@ public class MyTableRow {
 			try {
 				Extractor.INSTANCE.day = columns.get(1).getDayOfMonth();
 
-				OutputDay outputDay = new OutputDay();
+				Fragment outputDay = new Fragment();
 				outputDay.day = Extractor.INSTANCE.day;
 				outputDay.month = Extractor.INSTANCE.month;
 				outputDay.year = Extractor.INSTANCE.year;
@@ -139,7 +139,7 @@ public class MyTableRow {
 			lines.set(0, matcher.group(2));
 		}
 
-		OutputDay outputDay = outputDocument.days.get(size - 1);
+		Fragment outputDay = outputDocument.days.get(size - 1);
 
 		outputDay.html = buildLine(lines);
 		outputDay.notes = buildLine(notes);

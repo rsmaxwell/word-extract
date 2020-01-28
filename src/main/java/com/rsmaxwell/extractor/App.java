@@ -117,9 +117,9 @@ public class App {
 		String inputFilename = line.getOptionValue("i");
 
 		String outputDirName = line.getOptionValue("o", "./output");
-		File outputPageDir = new File(outputDirName, "pages");
+		File outputPageDir = new File(outputDirName, "dependancies");
 		outputPageDir.mkdirs();
-		File outputDayDir = new File(outputDirName, "days");
+		File outputDayDir = new File(outputDirName, "fragments");
 		outputDayDir.mkdirs();
 
 		String workingDirName = line.getOptionValue("w", "./working");
