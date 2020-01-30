@@ -70,7 +70,7 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String workingDirName, File outputPageDir, File outputDayDir, int year) throws Exception {
+	public void toJson(String workingDirName, File dependancyDir, File fragmentDir, int year) throws Exception {
 
 		String inputFilename = workingDirName + "/word/document.xml";
 
@@ -87,18 +87,19 @@ public enum Extractor {
 		OutputDocument outputDocument = document.toOutput();
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		for (Fragment day : outputDocument.days) {
+		for (Fragment fragment : outputDocument.fragments) {
 
-			String filename = String.format("%04d-%02d-%02d-%s", day.year, day.month, day.day, day.order) + ".json";
+			String filename = String.format("%04d-%02d-%02d-%s-%s", fragment.year, fragment.month, fragment.day,
+					fragment.order, fragment.reference) + ".json";
 
-			if (day.html == null) {
-				throw new Exception("null line found in day: " + filename);
+			if (fragment.html == null) {
+				throw new Exception("null line found in fragment: " + filename);
 			}
 
-			File outputFile = new File(outputDayDir, filename);
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, day);
+			File outputFile = new File(fragmentDir, filename);
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, fragment);
 
-			File pageFile = new File(outputPageDir, day.reference);
+			File pageFile = new File(dependancyDir, fragment.reference);
 			touch(pageFile);
 		}
 	}

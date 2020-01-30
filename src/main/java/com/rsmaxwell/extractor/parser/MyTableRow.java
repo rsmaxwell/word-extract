@@ -97,7 +97,7 @@ public class MyTableRow {
 				outputDay.order = Extractor.INSTANCE.order;
 				outputDay.reference = Extractor.INSTANCE.reference;
 
-				outputDocument.days.add(outputDay);
+				outputDocument.fragments.add(outputDay);
 				return;
 
 			} catch (Exception e) {
@@ -105,7 +105,7 @@ public class MyTableRow {
 		}
 
 		// Check there is at least one day in the given outputMonth
-		int size = outputDocument.days.size();
+		int size = outputDocument.fragments.size();
 		if (size <= 0) {
 			throw new Exception("The month does not contain any days");
 		}
@@ -139,7 +139,7 @@ public class MyTableRow {
 			lines.set(0, matcher.group(2));
 		}
 
-		Fragment outputDay = outputDocument.days.get(size - 1);
+		Fragment outputDay = outputDocument.fragments.get(size - 1);
 
 		outputDay.html = buildLine(lines);
 		outputDay.notes = buildLine(notes);
