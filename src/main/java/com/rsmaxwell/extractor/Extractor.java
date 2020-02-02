@@ -3,7 +3,9 @@ package com.rsmaxwell.extractor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -70,7 +72,8 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String workingDirName, File dependancyDir, File fragmentDir, int year) throws Exception {
+	public void toJson(String wordFilename, String workingDirName, File dependancyDir, File fragmentDir, int year)
+			throws Exception {
 
 		String inputFilename = workingDirName + "/word/document.xml";
 
@@ -86,21 +89,35 @@ public enum Extractor {
 		MyDocument document = MyDocument.create(root, 0);
 		OutputDocument outputDocument = document.toOutput();
 
+		StringBuilder sb = new StringBuilder();
+		String separator = "";
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (Fragment fragment : outputDocument.fragments) {
 
-			String filename = String.format("%04d-%02d-%02d-%s-%s", fragment.year, fragment.month, fragment.day,
+			String fragmentFilename = String.format("%04d-%02d-%02d-%s-%s", fragment.year, fragment.month, fragment.day,
 					fragment.order, fragment.reference) + ".json";
 
 			if (fragment.html == null) {
-				throw new Exception("null line found in fragment: " + filename);
+				throw new Exception("null line found in fragment: " + fragmentFilename);
 			}
 
-			File outputFile = new File(fragmentDir, filename);
+			File outputFile = new File(fragmentDir, fragmentFilename);
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, fragment);
 
-			File pageFile = new File(dependancyDir, fragment.reference);
-			touch(pageFile);
+			sb.append(separator);
+			sb.append(fragmentFilename);
+			separator = " ";
+		}
+
+		sb.append(" &: ");
+		sb.append(wordFilename);
+		sb.append("\n\textract $^\n");
+
+		File dependancyFile = new File(dependancyDir, reference + ".mk");
+		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
+			PrintWriter dependancyPrintWriter = new PrintWriter(dependancyWriter);
+			dependancyPrintWriter.println(sb.toString());
 		}
 	}
 

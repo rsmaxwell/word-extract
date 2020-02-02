@@ -1,7 +1,9 @@
 package com.rsmaxwell.extractor.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,11 +54,42 @@ public class MyRun {
 		}
 
 		String highlight = getHighlight();
-		if (highlight != null) {
-			return "<highlight " + highlight + ">" + sb.toString() + "</highlight>";
-		}
+		if (highlight == null) {
+			return sb.toString();
+		} else {
+			String colour = toHTMLcolour(highlight);
 
-		return sb.toString();
+			if (colour == null) {
+				System.out.println("ERROR: unexpected highlight value: " + highlight);
+				colour = "?";
+			}
+
+			return "<span class=highlight_" + colour + ">" + sb.toString() + "</span>";
+		}
+	}
+
+	private static Map<String, String> colours = new HashMap<String, String>();
+
+	static {
+		colours.put("yellow", "yellow");
+		colours.put("green", "lime");
+		colours.put("cyan", "aqua");
+		colours.put("magenta", "magenta");
+		colours.put("blue", "blue");
+		colours.put("red", "red");
+		colours.put("darkBlue", "navy");
+		colours.put("darkCyan", "teal");
+		colours.put("darkGreen", "green");
+		colours.put("darkMagenta", "purple");
+		colours.put("darkRed", "maroon");
+		colours.put("darkYellow", "olive");
+		colours.put("darkGray", "gray");
+		colours.put("lightGray", "silver");
+		colours.put("black", "black");
+	}
+
+	private String toHTMLcolour(String ms_word) {
+		return colours.get(ms_word);
 	}
 
 	public String getHighlight() {

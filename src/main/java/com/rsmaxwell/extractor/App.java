@@ -114,26 +114,27 @@ public class App {
 
 		CommandLine line = getCommandLine(args);
 
-		String inputFilename = line.getOptionValue("i");
+		String wordFilename = line.getOptionValue("i");
+		String wordBaseFilename = getBaseName(wordFilename);
 
 		String outputDirName = line.getOptionValue("o", "./output");
-		File outputPageDir = new File(outputDirName, "dependancies");
-		outputPageDir.mkdirs();
-		File outputDayDir = new File(outputDirName, "fragments");
-		outputDayDir.mkdirs();
+		File dependanciesDir = new File(outputDirName, "dependancies");
+		dependanciesDir.mkdirs();
+		File fragmentDir = new File(outputDirName, "fragments");
+		fragmentDir.mkdirs();
 
 		String workingDirName = line.getOptionValue("w", "./working");
 		clearWorkingDirectory(workingDirName);
 
 		Extractor extractor = Extractor.INSTANCE;
-		extractor.order = getBaseName(inputFilename);
-		extractor.reference = getBaseName(inputFilename);
+		extractor.order = wordBaseFilename;
+		extractor.reference = wordBaseFilename;
 
 		String yearString = line.getOptionValue("y");
 		int year = Integer.parseInt(yearString);
-		extractor.unzip(inputFilename, workingDirName);
+		extractor.unzip(wordFilename, workingDirName);
 
-		extractor.toJson(workingDirName, outputPageDir, outputDayDir, year);
+		extractor.toJson(wordFilename, workingDirName, dependanciesDir, fragmentDir, year);
 	}
 
 	private static String getBaseName(String filename) {
