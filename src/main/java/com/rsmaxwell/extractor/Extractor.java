@@ -75,6 +75,9 @@ public enum Extractor {
 	public void toJson(String wordFilename, String workingDirName, File dependancyDir, File fragmentDir, int year)
 			throws Exception {
 
+		// ---------------------------------------------------------------------
+		// Parse the MS Word file into an output document
+		// ---------------------------------------------------------------------
 		String inputFilename = workingDirName + "/word/document.xml";
 
 		this.year = year;
@@ -89,12 +92,20 @@ public enum Extractor {
 		MyDocument document = MyDocument.create(root, 0);
 		OutputDocument outputDocument = document.toOutput();
 
-		StringBuilder sb = new StringBuilder();
-		String separator = "";
+		// ---------------------------------------------------------------------
+		// Create a buffer to collect the dependencies
+		// ---------------------------------------------------------------------
+		StringBuilder deps = new StringBuilder();
 
+		// ---------------------------------------------------------------------
+		// Write out the fragments to disk
+		// ---------------------------------------------------------------------
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (Fragment fragment : outputDocument.fragments) {
 
+			// ---------------------------------------------------------------------
+			// Write out the fragment as a json file
+			// ---------------------------------------------------------------------
 			String fragmentFilename = String.format("%04d-%02d-%02d-%s-%s", fragment.year, fragment.month, fragment.day,
 					fragment.order, fragment.reference) + ".json";
 
@@ -105,19 +116,24 @@ public enum Extractor {
 			File outputFile = new File(fragmentDir, fragmentFilename);
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, fragment);
 
-			sb.append(separator);
-			sb.append(fragmentFilename);
-			separator = " ";
+			// ---------------------------------------------------------------------
+			// Add the dependencies
+			// ---------------------------------------------------------------------
+			deps.append(" ");
+			deps.append(fragmentFilename);
 		}
 
-		sb.append(" &: ");
-		sb.append(wordFilename);
-		sb.append("\n\textract $^\n");
+		// ---------------------------------------------------------------------
+		// Write the dependencies to file
+		// ---------------------------------------------------------------------
+		deps.append(" &: \"");
+		deps.append(wordFilename);
+		deps.append("\"\n\textract $^\n");
 
 		File dependancyFile = new File(dependancyDir, reference + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
 			PrintWriter dependancyPrintWriter = new PrintWriter(dependancyWriter);
-			dependancyPrintWriter.println(sb.toString());
+			dependancyPrintWriter.println(deps.toString());
 		}
 	}
 
