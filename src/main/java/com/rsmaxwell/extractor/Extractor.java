@@ -72,7 +72,7 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String wordFilename, String workingDirName, File dependancyDir, File fragmentDir, int year)
+	public void toJson(String wordPathname, String workingDirName, File dependancyDir, File fragmentDir, int year)
 			throws Exception {
 
 		// ---------------------------------------------------------------------
@@ -117,18 +117,18 @@ public enum Extractor {
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, fragment);
 
 			// ---------------------------------------------------------------------
-			// Add the dependencies
+			// Add this fragment as a dependency
 			// ---------------------------------------------------------------------
 			deps.append(" ");
 			deps.append(fragmentFilename);
 		}
 
 		// ---------------------------------------------------------------------
-		// Write the dependencies to file
+		// Write the dependencies of the word file as a rule to the makefile
 		// ---------------------------------------------------------------------
-		deps.append(" &: \"");
-		deps.append(wordFilename);
-		deps.append("\"\n\textract $^\n");
+		deps.append(" &: ");
+		deps.append(wordPathname);
+		deps.append("\n\textract $^\n");
 
 		File dependancyFile = new File(dependancyDir, reference + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
