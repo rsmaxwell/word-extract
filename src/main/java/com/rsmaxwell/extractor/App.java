@@ -52,20 +52,12 @@ public class App {
 	                        .hasArg()
 	                        .desc("set the working directory")
 	                        .build();
-		
-		Option year = Option.builder("y")
-				            .longOpt("year")
-				            .argName("year")
-				            .hasArg()
-				            .desc("set the year")
-				            .build();
 		// @formatter:on
 
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
 		options.addOption(inputFile);
-		options.addOption(year);
 		options.addOption(workingDir);
 		options.addOption(outputFile);
 
@@ -130,11 +122,8 @@ public class App {
 		extractor.order = wordBaseFilename;
 		extractor.reference = wordBaseFilename;
 
-		String yearString = line.getOptionValue("y");
-		int year = Integer.parseInt(yearString);
 		extractor.unzip(wordFilename, workingDirName);
-
-		extractor.toJson(wordFilename, workingDirName, dependanciesDir, fragmentDir, year);
+		extractor.toJson(wordFilename, workingDirName, dependanciesDir, fragmentDir);
 	}
 
 	private static String getBaseName(String filename) {

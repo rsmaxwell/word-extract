@@ -72,16 +72,20 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String wordPathname, String workingDirName, File dependancyDir, File fragmentDir, int year)
+	public void toJson(String wordPathname, String workingDirName, File dependancyDir, File fragmentDir)
 			throws Exception {
+
+		// ---------------------------------------------------------------------
+		// Find the year which this word file refers to
+		// ---------------------------------------------------------------------
+		File file = new File(wordPathname);
+		String basename = file.getName();
+		this.year = FindYear.get(basename);
 
 		// ---------------------------------------------------------------------
 		// Parse the MS Word file into an output document
 		// ---------------------------------------------------------------------
 		String inputFilename = workingDirName + "/word/document.xml";
-
-		this.year = year;
-
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(inputFilename);
