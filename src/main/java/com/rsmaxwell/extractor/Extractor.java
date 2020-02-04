@@ -132,7 +132,7 @@ public enum Extractor {
 		// ---------------------------------------------------------------------
 		deps.append(" &: ");
 		deps.append(wordPathname);
-		deps.append("\n\textract $^\n");
+		deps.append("\n\t./extract $^\n");
 
 		File dependancyFile = new File(dependancyDir, reference + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
