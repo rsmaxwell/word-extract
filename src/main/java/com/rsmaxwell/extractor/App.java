@@ -75,10 +75,6 @@ public class App {
 		} else if (line.hasOption('h')) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("extractor <OPTION> ", options);
-		} else if (!line.hasOption('y')) {
-			System.out.println("Missing required option -y | --year");
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("extractor <OPTION> ", options);
 		}
 
 		return line;
@@ -105,6 +101,11 @@ public class App {
 	public static void main(String[] args) throws Exception {
 
 		CommandLine line = getCommandLine(args);
+
+		if (!line.hasOption('i')) {
+			System.out.println("Missing required option -i | --inputFile");
+			return;
+		}
 
 		String wordFilename = line.getOptionValue("i");
 		String wordBaseFilename = getBaseName(wordFilename);
