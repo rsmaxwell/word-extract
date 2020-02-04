@@ -124,7 +124,7 @@ public enum Extractor {
 			// Add this fragment as a dependency
 			// ---------------------------------------------------------------------
 			deps.append(" ");
-			deps.append(fragmentFilename);
+			deps.append(fragmentDir + "/" + fragmentFilename);
 		}
 
 		// ---------------------------------------------------------------------
