@@ -1,11 +1,15 @@
 package com.rsmaxwell.extractor;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -18,20 +22,64 @@ import org.w3c.dom.Element;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rsmaxwell.diaryjson.Fragment;
 import com.rsmaxwell.diaryjson.OutputDocument;
+import com.rsmaxwell.diaryjson.Template;
 import com.rsmaxwell.extractor.parser.MyDocument;
 
-public enum Extractor {
-
-	INSTANCE;
+public class Extractor {
 
 	public int year;
 	public int month;
 	public int day;
 	public String order;
-	public String reference;
 
-	public void unzip(String archive, String destDirName) throws IOException {
-		File destDir = new File(destDirName);
+	private String inputDirName;
+	private File inputDir;
+
+	private String outputDirName;
+	private File outputDir;
+
+	private String workingDirName;
+	private File workingDir;
+
+	private String dependanciesDirName;
+	private File dependanciesDir;
+
+	private String fragmentBaseName;
+	private File fragmentBase;
+
+	private String templateDirName;
+	private File templateDir;
+
+	public static Extractor instance;
+
+	private static Extractor getInstance() {
+		return instance;
+	}
+
+	public Extractor(String inputDirName, String outputDirName) {
+
+		this.inputDirName = inputDirName;
+		inputDir = new File(inputDirName);
+
+		this.workingDirName = outputDirName + "/working";
+		workingDir = new File(workingDirName);
+
+		this.dependanciesDirName = outputDirName + "/dependancies";
+		dependanciesDir = new File(dependanciesDirName);
+		dependanciesDir.mkdirs();
+
+		this.fragmentBaseName = outputDirName + "/fragments";
+		fragmentBase = new File(fragmentBaseName);
+		fragmentBase.mkdirs();
+
+		templateDirName = inputDir + "/templates";
+		templateDir = new File(templateDirName);
+	}
+
+	public void unzip(String archive) throws IOException {
+
+		clearWorkingDirectory(workingDir);
+
 		byte[] buffer = new byte[1024];
 		ZipInputStream zis = new ZipInputStream(new FileInputStream(archive));
 		ZipEntry zipEntry = zis.getNextEntry();
@@ -39,12 +87,12 @@ public enum Extractor {
 
 			if ("word/document.xml".contentEquals(zipEntry.getName())) {
 
-				String filename = destDirName + "/" + zipEntry.getName();
+				String filename = workingDirName + "/" + zipEntry.getName();
 				File file = new File(filename);
 				File parentFolder = new File(file.getParent());
 				parentFolder.mkdirs();
 
-				File newFile = newFile(destDir, zipEntry);
+				File newFile = newFile(workingDir, zipEntry);
 				FileOutputStream fos = new FileOutputStream(newFile);
 				int len;
 				while ((len = zis.read(buffer)) > 0) {
@@ -57,6 +105,23 @@ public enum Extractor {
 		}
 		zis.closeEntry();
 		zis.close();
+	}
+
+	private static void clearWorkingDirectory(File dir) throws IOException {
+
+		Path path = dir.toPath();
+
+		if (Files.exists(path)) {
+			Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		}
+
+		if (Files.exists(path)) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+		Files.createDirectory(path);
 	}
 
 	private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
@@ -72,15 +137,14 @@ public enum Extractor {
 		return destFile;
 	}
 
-	public void toJson(String wordPathname, String workingDirName, File dependancyDir, File fragmentDir)
-			throws Exception {
+	public void toJson(String wordPathname) throws Exception {
 
 		// ---------------------------------------------------------------------
 		// Find the year which this word file refers to
 		// ---------------------------------------------------------------------
-		File file = new File(wordPathname);
-		String basename = file.getName();
-		this.year = FindYear.get(basename);
+		this.year = FindYear.get(wordPathname);
+
+		this.order = getBaseName(new File(wordPathname));
 
 		// ---------------------------------------------------------------------
 		// Parse the MS Word file into an output document
@@ -107,24 +171,37 @@ public enum Extractor {
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (Fragment fragment : outputDocument.fragments) {
 
-			// ---------------------------------------------------------------------
-			// Write out the fragment as a json file
-			// ---------------------------------------------------------------------
-			String fragmentFilename = String.format("%04d-%02d-%02d-%s-%s", fragment.year, fragment.month, fragment.day,
-					fragment.order, fragment.reference) + ".json";
-
+			String dirName = fragment.toString();
 			if (fragment.html == null) {
-				throw new Exception("null line found in fragment: " + fragmentFilename);
+				throw new Exception("null html found in fragment: " + dirName);
 			}
 
-			File outputFile = new File(fragmentDir, fragmentFilename);
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, fragment);
+			// ---------------------------------------------------------------------
+			// Write out the fragment as a json info file and a separate text file
+			// with the html content
+			// ---------------------------------------------------------------------
+			String fragmentDirName = fragmentBaseName + "/" + dirName;
+			File fragmentDir = new File(fragmentDirName);
+			fragmentDir.mkdirs();
+
+			String string = fragment.html;
+			if (fragment.template) {
+				string = Template.getString(fragment.html);
+			}
+
+			File jsonFile = new File(fragmentDir, "fragment.json");
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, fragment);
+
+			Path htmlPath = new File(fragmentDir, "fragment.html").toPath();
+			try (BufferedWriter writer = Files.newBufferedWriter(htmlPath)) {
+				writer.write(string);
+			}
 
 			// ---------------------------------------------------------------------
-			// Add this fragment as a dependency
+			// Add this fragment as a makefile target
 			// ---------------------------------------------------------------------
 			deps.append(" ");
-			deps.append(fragmentDir + "/" + fragmentFilename);
+			deps.append(fragmentDirName + "/fragment.json");
 		}
 
 		// ---------------------------------------------------------------------
@@ -132,9 +209,13 @@ public enum Extractor {
 		// ---------------------------------------------------------------------
 		deps.append(" &: ");
 		deps.append(wordPathname);
-		deps.append("\n\t./extract $^\n");
+		deps.append("\n");
+		deps.append("\t./extract $^");
+		deps.append("\n");
 
-		File dependancyFile = new File(dependancyDir, reference + ".mk");
+		File wordfile = new File(wordPathname);
+		String basename = getBaseName(wordfile);
+		File dependancyFile = new File(dependanciesDir, basename + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
 			PrintWriter dependancyPrintWriter = new PrintWriter(dependancyWriter);
 			dependancyPrintWriter.println(deps.toString());
@@ -152,5 +233,13 @@ public enum Extractor {
 		}
 
 		file.setLastModified(timestamp);
+	}
+
+	private static String getBaseName(File file) {
+		String fileName = file.getName();
+		if (fileName.indexOf(".") > 0) {
+			fileName = fileName.substring(0, fileName.lastIndexOf("."));
+		}
+		return fileName;
 	}
 }

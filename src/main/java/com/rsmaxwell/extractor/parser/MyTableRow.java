@@ -85,19 +85,15 @@ public class MyTableRow {
 
 	public void toOutput(OutputDocument outputDocument) throws Exception {
 
+		Extractor extractor = Extractor.instance;
+
 		// Check the the day-of-month
 		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(2).isDivider())) {
 			try {
-				Extractor.INSTANCE.day = columns.get(1).getDayOfMonth();
+				extractor.day = columns.get(1).getDayOfMonth();
 
-				Fragment outputDay = new Fragment();
-				outputDay.day = Extractor.INSTANCE.day;
-				outputDay.month = Extractor.INSTANCE.month;
-				outputDay.year = Extractor.INSTANCE.year;
-				outputDay.order = Extractor.INSTANCE.order;
-				outputDay.reference = Extractor.INSTANCE.reference;
-
-				outputDocument.fragments.add(outputDay);
+				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
+				outputDocument.fragments.add(fragment);
 				return;
 
 			} catch (Exception e) {
@@ -134,7 +130,7 @@ public class MyTableRow {
 
 			String string = matcher.group(1);
 			int dayOfWeek = Day.toInt(string);
-			Day.check(Extractor.INSTANCE.year, Extractor.INSTANCE.month, Extractor.INSTANCE.day, dayOfWeek);
+			Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
 
 			lines.set(0, matcher.group(2));
 		}
@@ -151,13 +147,13 @@ public class MyTableRow {
 		for (int i = 0; i < array.size(); i++) {
 			String next = array.get(i);
 			if (next.length() == 0) {
-				separator = "</p><p>";
+				separator = "</p>\n<p>";
 			} else {
 				line = join(line, next, separator);
 				separator = " ";
 			}
 		}
-		return (line == null) ? null : "<p>" + line + "</p>";
+		return (line == null) ? null : "<p>" + line + "</p>\n";
 	}
 
 	private String join(String one, String two, String separator) throws Exception {

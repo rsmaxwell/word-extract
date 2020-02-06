@@ -1,5 +1,6 @@
 package com.rsmaxwell.extractor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +24,16 @@ public class FindYear {
 		sideMap.put("right", RIGHT);
 	}
 
-	public static int get(String string) throws Exception {
+	public static int get(String filename) throws Exception {
+
+		File file = new File(filename);
+		String basename = file.getName();
 
 		Pattern docxPattern = Pattern.compile(docxRegex);
-		Matcher m = docxPattern.matcher(string);
+		Matcher m = docxPattern.matcher(basename);
 
 		if (!m.find()) {
-			throw new Exception("Unexpected filename: " + string);
+			throw new Exception("Unexpected filename: " + filename);
 		}
 
 		String numberString = m.group(1);

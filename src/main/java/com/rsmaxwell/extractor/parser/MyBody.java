@@ -57,7 +57,8 @@ public class MyBody {
 
 				String string = element.toString();
 				try {
-					Extractor.INSTANCE.month = Month.toInt(string);
+					Extractor extractor = Extractor.instance;
+					extractor.month = Month.toInt(string);
 
 					sb.append("---[ ");
 					sb.append(string);
@@ -82,7 +83,8 @@ public class MyBody {
 
 				String string = element.toString();
 				try {
-					Extractor.INSTANCE.month = Month.toInt(string);
+					Extractor extractor = Extractor.instance;
+					extractor.month = Month.toInt(string);
 
 				} catch (Exception e) {
 				}

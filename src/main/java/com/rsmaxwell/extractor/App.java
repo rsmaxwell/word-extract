@@ -1,11 +1,6 @@
 package com.rsmaxwell.extractor;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -32,11 +27,11 @@ public class App {
 				            .desc("show program help")
 				            .build();
 		
-		Option inputFile = Option.builder("i")
-				            .longOpt("inputFile")
-				            .argName("inputFile")
+		Option wordFile = Option.builder("w")
+				            .longOpt("wordFile")
+				            .argName("wordFile")
 				            .hasArg()
-				            .desc("set the input word file (*.docx)")
+				            .desc("set the word file (*.docx)")
 				            .build();
 		
 		Option outputFile = Option.builder("o")
@@ -46,19 +41,19 @@ public class App {
                             .desc("set the output dir")
                             .build();
 		
-		Option workingDir = Option.builder("w")
-	                        .longOpt("workingDir")
-	                        .argName("workingDir")
-	                        .hasArg()
-	                        .desc("set the working directory")
-	                        .build();
+		Option inputDir = Option.builder("i")
+                            .longOpt("inputDir")
+                            .argName("inputDir")
+                            .hasArg()
+                            .desc("set the input dir")
+                            .build();
 		// @formatter:on
 
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
-		options.addOption(inputFile);
-		options.addOption(workingDir);
+		options.addOption(wordFile);
+		options.addOption(inputDir);
 		options.addOption(outputFile);
 
 		CommandLineParser parser = new DefaultParser();
@@ -80,59 +75,33 @@ public class App {
 		return line;
 	}
 
-	private static void clearWorkingDirectory(String relativeWorkingDirName) throws IOException {
-		File relativeWorkingDir = new File(relativeWorkingDirName);
-		String workingDirName = relativeWorkingDir.getCanonicalPath();
-		Path workingDir = Paths.get(workingDirName);
-
-		if (Files.exists(workingDir)) {
-			Files.walk(workingDir).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-		}
-
-		if (Files.exists(workingDir)) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-		}
-		Files.createDirectory(workingDir);
-	}
-
 	public static void main(String[] args) throws Exception {
 
 		CommandLine line = getCommandLine(args);
 
-		if (!line.hasOption('i')) {
-			System.out.println("Missing required option -i | --inputFile");
+		if (!line.hasOption('w')) {
+			System.out.println("Missing required option -w | --wordFile");
 			return;
 		}
 
-		String wordFilename = line.getOptionValue("i");
-		String wordBaseFilename = getBaseName(wordFilename);
-
-		String outputDirName = line.getOptionValue("o", "./output");
-		File dependanciesDir = new File(outputDirName, "dependancies");
-		dependanciesDir.mkdirs();
-		File fragmentDir = new File(outputDirName, "fragments");
-		fragmentDir.mkdirs();
-
-		String workingDirName = line.getOptionValue("w", "./working");
-		clearWorkingDirectory(workingDirName);
-
-		Extractor extractor = Extractor.INSTANCE;
-		extractor.order = wordBaseFilename;
-		extractor.reference = wordBaseFilename;
-
-		extractor.unzip(wordFilename, workingDirName);
-		extractor.toJson(wordFilename, workingDirName, dependanciesDir, fragmentDir);
-	}
-
-	private static String getBaseName(String filename) {
-		File file = new File(filename);
-		String fileName = file.getName();
-		if (fileName.indexOf(".") > 0) {
-			fileName = fileName.substring(0, fileName.lastIndexOf("."));
+		String wordFileName = line.getOptionValue("w");
+		File wordFile = new File(wordFileName);
+		if (!wordFile.exists()) {
+			throw new Exception("file not found: " + wordFileName);
 		}
-		return fileName;
+
+		String inputDirName = line.getOptionValue("i", "input");
+		File inputDir = new File(inputDirName);
+		if (!inputDir.exists()) {
+			throw new Exception("dir not found: " + inputDirName);
+		}
+
+		String outputDirName = line.getOptionValue("o", "output");
+
+		Extractor extractor = new Extractor(inputDirName, outputDirName);
+		Extractor.instance = extractor;
+
+		extractor.unzip(wordFileName);
+		extractor.toJson(wordFileName);
 	}
 }
