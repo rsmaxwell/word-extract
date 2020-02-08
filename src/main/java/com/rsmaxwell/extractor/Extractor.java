@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rsmaxwell.diaryjson.Fragment;
 import com.rsmaxwell.diaryjson.OutputDocument;
-import com.rsmaxwell.diaryjson.Template;
 import com.rsmaxwell.extractor.parser.MyDocument;
 
 public class Extractor {
@@ -184,17 +183,12 @@ public class Extractor {
 			File fragmentDir = new File(fragmentDirName);
 			fragmentDir.mkdirs();
 
-			String string = fragment.html;
-			if (fragment.template) {
-				string = Template.getString(fragment.html);
-			}
-
 			File jsonFile = new File(fragmentDir, "fragment.json");
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, fragment);
 
 			Path htmlPath = new File(fragmentDir, "fragment.html").toPath();
 			try (BufferedWriter writer = Files.newBufferedWriter(htmlPath)) {
-				writer.write(string);
+				writer.write(fragment.html);
 			}
 
 			// ---------------------------------------------------------------------
