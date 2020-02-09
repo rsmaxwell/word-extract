@@ -93,6 +93,7 @@ public class MyTableRow {
 				extractor.day = columns.get(1).getDayOfMonth();
 
 				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
+				fragment.source = extractor.source;
 				outputDocument.fragments.add(fragment);
 				return;
 

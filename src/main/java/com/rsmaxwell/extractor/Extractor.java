@@ -30,6 +30,7 @@ public class Extractor {
 	public int month;
 	public int day;
 	public String order;
+	public String source;
 
 	private String inputDirName;
 	private File inputDir;
@@ -144,6 +145,7 @@ public class Extractor {
 		this.year = FindYear.get(wordPathname);
 
 		this.order = getBaseName(new File(wordPathname));
+		this.source = wordPathname;
 
 		// ---------------------------------------------------------------------
 		// Parse the MS Word file into an output document
