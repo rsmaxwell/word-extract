@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -143,8 +145,7 @@ public class Extractor {
 		// Find the year which this word file refers to
 		// ---------------------------------------------------------------------
 		this.year = FindYear.get(wordPathname);
-
-		this.order = getBaseName(new File(wordPathname));
+		this.order = getBasename(wordPathname);
 		this.source = wordPathname;
 
 		// ---------------------------------------------------------------------
@@ -164,7 +165,7 @@ public class Extractor {
 		// ---------------------------------------------------------------------
 		// Create a buffer to collect the dependencies
 		// ---------------------------------------------------------------------
-		StringBuilder deps = new StringBuilder();
+		Set<String> deps = new HashSet<String>();
 
 		// ---------------------------------------------------------------------
 		// Write out the fragments to disk
@@ -172,10 +173,11 @@ public class Extractor {
 		ObjectMapper objectMapper = new ObjectMapper();
 		for (Fragment fragment : outputDocument.fragments) {
 
-			String dirName = fragment.toString();
 			if (fragment.html == null) {
-				throw new Exception("null html found in fragment: " + dirName);
+				throw new Exception("null html found in fragment: " + fragment);
 			}
+
+			String dirName = fragment.getDirectoryName();
 
 			// ---------------------------------------------------------------------
 			// Write out the fragment as a json info file and a separate text file
@@ -194,27 +196,34 @@ public class Extractor {
 			}
 
 			// ---------------------------------------------------------------------
-			// Add this fragment as a makefile target
+			// This fragment depends on the word file, so ad it as a dependancy
 			// ---------------------------------------------------------------------
-			deps.append(" ");
-			deps.append(fragmentDirName + "/fragment.json");
+			deps.add(fragmentDirName + "/fragment.json");
 		}
 
 		// ---------------------------------------------------------------------
-		// Write the dependencies of the word file as a rule to the makefile
+		// Write out the makefile
 		// ---------------------------------------------------------------------
-		deps.append(" &: ");
-		deps.append(wordPathname);
-		deps.append("\n");
-		deps.append("\t./extract $^");
-		deps.append("\n");
+		String separator = "";
+		StringBuilder sb = new StringBuilder();
+		for (String dep : deps) {
+			sb.append(separator);
+			sb.append(dep);
+			separator = " ";
+		}
 
-		File wordfile = new File(wordPathname);
-		String basename = getBaseName(wordfile);
+		sb.append(" &: ");
+		sb.append(wordPathname);
+		sb.append("\n");
+		sb.append("\t./extract $^");
+		sb.append("\n");
+
+		String basename = getBasename(wordPathname);
+
 		File dependancyFile = new File(dependanciesDir, basename + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
 			PrintWriter dependancyPrintWriter = new PrintWriter(dependancyWriter);
-			dependancyPrintWriter.println(deps.toString());
+			dependancyPrintWriter.println(sb.toString());
 		}
 	}
 
@@ -231,11 +240,27 @@ public class Extractor {
 		file.setLastModified(timestamp);
 	}
 
-	private static String getBaseName(File file) {
-		String fileName = file.getName();
-		if (fileName.indexOf(".") > 0) {
-			fileName = fileName.substring(0, fileName.lastIndexOf("."));
+	private static String getBasename(String pathname) {
+		File file = new File(pathname);
+		String filename = file.getName();
+		return removeExtension(filename);
+	}
+
+	public static String getExtension(String filename) {
+		String extension = "";
+		int i = filename.lastIndexOf('.');
+		if (i > 0) {
+			extension = filename.substring(i + 1);
 		}
-		return fileName;
+		return extension;
+	}
+
+	public static String removeExtension(String filename) {
+		String result = filename;
+		int i = filename.lastIndexOf('.');
+		if (i > 0) {
+			result = filename.substring(0, i);
+		}
+		return result;
 	}
 }
