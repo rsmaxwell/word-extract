@@ -177,7 +177,7 @@ public class Extractor {
 				throw new Exception("null html found in fragment: " + fragment);
 			}
 
-			String dirName = fragment.getDirectoryName();
+			String dirName = fragment.toDirectoryName();
 
 			// ---------------------------------------------------------------------
 			// Write out the fragment as a json info file and a separate text file
