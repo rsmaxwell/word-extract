@@ -1,5 +1,6 @@
 package com.rsmaxwell.extractor.parser;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Text;
 
 public class MyTextText implements MyNode {
@@ -29,6 +30,8 @@ public class MyTextText implements MyNode {
 		string = string.replace('\u201C', '"');
 		string = string.replace('\u201D', '"');
 		string = string.replace("\u2026", "...");
+
+		string = StringEscapeUtils.escapeHtml4(string);
 
 		return string;
 	}
