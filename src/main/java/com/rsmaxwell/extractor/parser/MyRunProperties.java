@@ -26,19 +26,19 @@ public class MyRunProperties extends MyElement {
 				if ("w:highlight".contentEquals(nodeName)) {
 					runProperties.elements.add(MyHighlight.create(childElement, level + 1));
 				} else if ("w:vertAlign".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MyVerticalAlign.create(childElement, level + 1));
 				} else if ("w:rFonts".contentEquals(nodeName)) {
 					// ok
 				} else if ("w:sz".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MySize.create(childElement, level + 1));
 				} else if ("w:szCs".contentEquals(nodeName)) {
 					// ok
 				} else if ("w:b".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MyBold.create(childElement, level + 1));
 				} else if ("w:u".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MyUnderline.create(childElement, level + 1));
 				} else if ("w:color".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MyColour.create(childElement, level + 1));
 				} else if ("w:shd".contentEquals(nodeName)) {
 					// ok
 				} else if ("w:bCs".contentEquals(nodeName)) {
@@ -48,7 +48,9 @@ public class MyRunProperties extends MyElement {
 				} else if ("w:lang".contentEquals(nodeName)) {
 					// ok
 				} else if ("w:strike".contentEquals(nodeName)) {
-					// ok
+					runProperties.elements.add(MyStrike.create(childElement, level + 1));
+				} else if ("w:i".contentEquals(nodeName)) {
+					runProperties.elements.add(MyItalic.create(childElement, level + 1));
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
@@ -69,6 +71,83 @@ public class MyRunProperties extends MyElement {
 			String highlight = element.getHighlight();
 			if (highlight != null) {
 				return highlight;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean getBold() {
+		for (MyElement element : elements) {
+			boolean bold = element.getBold();
+			if (bold) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getUnderline() {
+		for (MyElement element : elements) {
+			String underline = element.getUnderline();
+			if (underline != null) {
+				return underline;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getSize() {
+		for (MyElement element : elements) {
+			String size = element.getSize();
+			if (size != null) {
+				return size;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getColour() {
+		for (MyElement element : elements) {
+			String colour = element.getColour();
+			if (colour != null) {
+				return colour;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean getItalic() {
+		for (MyElement element : elements) {
+			boolean italic = element.getItalic();
+			if (italic) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getStrike() {
+		for (MyElement element : elements) {
+			boolean strike = element.getStrike();
+			if (strike) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getVerticalAlign() {
+		for (MyElement element : elements) {
+			String alignType = element.getVerticalAlign();
+			if (alignType != null) {
+				return alignType;
 			}
 		}
 		return null;

@@ -49,23 +49,111 @@ public class MyRun {
 
 		StringBuilder sb = new StringBuilder();
 
+		// --------------------------------------------
+		// Get the text string for this run
+		// --------------------------------------------
 		for (MyElement element : elements) {
 			sb.append(element.toString());
 		}
+		String text = sb.toString();
 
+		// --------------------------------------------
+		// Wrap the text with a highlight span
+		// --------------------------------------------
 		String highlight = getHighlight();
-		if (highlight == null) {
-			return sb.toString();
-		} else {
-			String colour = toHTMLcolour(highlight);
+		if (highlight != null) {
+			String highlight2 = wordColourNameToHTML(highlight);
 
-			if (colour == null) {
-				System.out.println("ERROR: unexpected highlight value: " + highlight);
-				colour = "?";
+			if (highlight2 == null) {
+				throw new RuntimeException("unexpected highlight value: " + highlight);
 			}
 
-			return "<span class=highlight_" + colour + ">" + sb.toString() + "</span>";
+			text = "<span class=highlight_" + highlight2 + ">" + text + "</span>";
 		}
+
+		// --------------------------------------------
+		// Wrap the text with a bold span
+		// --------------------------------------------
+		boolean bold = getBold();
+		if (bold) {
+			text = "<b>" + text + "</b>";
+		}
+
+		// --------------------------------------------
+		// Wrap the text with an underline span
+		// --------------------------------------------
+		String underline = getUnderline();
+		if (underline != null) {
+			if ("single".equals(underline)) {
+				text = "<u>" + text + "</u>";
+			} else if ("double".equals(underline)) {
+				text = "<span class=underline_double>" + text + "</span>";
+			} else {
+				throw new RuntimeException("unexpected underline value: " + underline);
+			}
+		}
+
+		// --------------------------------------------
+		// Wrap the text with a font tag
+		// --------------------------------------------
+		String size = getSize();
+		String colour = getColour();
+
+		if ((size != null) || (colour != null)) {
+			String separator = "";
+			StringBuilder sb2 = new StringBuilder();
+			sb2.append("<font ");
+
+			if (size != null) {
+				sb2.append(separator + "size=" + size + "pt");
+				separator = " ";
+			}
+
+			if (colour != null) {
+				sb2.append(separator + "color=#" + colour);
+				separator = " ";
+			}
+
+			sb2.append(">");
+			sb2.append(text);
+			sb2.append("</font>");
+			text = sb2.toString();
+		}
+
+		// --------------------------------------------
+		// Wrap the text with a italic span
+		// --------------------------------------------
+		boolean italic = getItalic();
+		if (italic) {
+			text = "<i>" + text + "</i>";
+		}
+
+		// --------------------------------------------
+		// Wrap the text with a strike span
+		// --------------------------------------------
+		boolean strike = getStrike();
+		if (strike) {
+			text = "<del>" + text + "</del>";
+		}
+
+		// --------------------------------------------
+		// Wrap the text with a superscript span
+		// --------------------------------------------
+		String alignType = getVerticalAlign();
+		if (alignType != null) {
+			if ("superscript".equals(alignType)) {
+				text = "<sup>" + text + "</sup>";
+			} else if ("subscript".equals(alignType)) {
+				text = "<sub>" + text + "</sub>";
+			} else {
+				throw new RuntimeException("unexpected VerticalAlign value: " + alignType);
+			}
+		}
+
+		// --------------------------------------------
+		// Return the text string
+		// --------------------------------------------
+		return text;
 	}
 
 	private static Map<String, String> colours = new HashMap<String, String>();
@@ -88,7 +176,7 @@ public class MyRun {
 		colours.put("black", "black");
 	}
 
-	private String toHTMLcolour(String ms_word) {
+	private String wordColourNameToHTML(String ms_word) {
 		return colours.get(ms_word);
 	}
 
@@ -97,6 +185,76 @@ public class MyRun {
 			String highlight = element.getHighlight();
 			if (highlight != null) {
 				return highlight;
+			}
+		}
+		return null;
+	}
+
+	public boolean getBold() {
+		for (MyElement element : elements) {
+			boolean bold = element.getBold();
+			if (bold) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getUnderline() {
+		for (MyElement element : elements) {
+			String underline = element.getUnderline();
+			if (underline != null) {
+				return underline;
+			}
+		}
+		return null;
+	}
+
+	public String getSize() {
+		for (MyElement element : elements) {
+			String size = element.getSize();
+			if (size != null) {
+				return size;
+			}
+		}
+		return null;
+	}
+
+	public String getColour() {
+		for (MyElement element : elements) {
+			String colour = element.getColour();
+			if (colour != null) {
+				return colour;
+			}
+		}
+		return null;
+	}
+
+	public boolean getItalic() {
+		for (MyElement element : elements) {
+			boolean italic = element.getItalic();
+			if (italic) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean getStrike() {
+		for (MyElement element : elements) {
+			boolean strike = element.getStrike();
+			if (strike) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getVerticalAlign() {
+		for (MyElement element : elements) {
+			String alignType = element.getVerticalAlign();
+			if (alignType != null) {
+				return alignType;
 			}
 		}
 		return null;
