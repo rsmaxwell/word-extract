@@ -45,6 +45,18 @@ public class MyParagraph extends MyElement {
 	}
 
 	@Override
+	public String toHTML() {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (MyRun run : runs) {
+			sb.append(run.toHTML());
+		}
+
+		return sb.toString();
+	}
+
+	@Override
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder();

@@ -2,6 +2,15 @@ package com.rsmaxwell.extractor.parser;
 
 public abstract class MyElement implements MyNode {
 
+	@Override
+	public String toString() {
+		return "";
+	}
+
+	public String toHTML() {
+		return "";
+	}
+
 	public String getHighlight() {
 		return null;
 	}

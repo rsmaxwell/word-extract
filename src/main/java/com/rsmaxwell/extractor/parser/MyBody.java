@@ -84,7 +84,6 @@ public class MyBody {
 				String string = element.toString();
 				try {
 					Extractor extractor = Extractor.instance;
-					string = string.replaceAll("\\<.*?\\>", "");
 					extractor.month = Month.toInt(string);
 
 				} catch (Exception e) {

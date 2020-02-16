@@ -10,9 +10,4 @@ public class MyBold extends MyElement {
 		MyBold myBold = new MyBold();
 		return myBold;
 	}
-
-	@Override
-	public boolean getBold() {
-		return true;
-	}
 }

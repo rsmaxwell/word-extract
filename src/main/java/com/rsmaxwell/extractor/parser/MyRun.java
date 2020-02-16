@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class MyRun {
+public class MyRun extends MyElement {
 
 	private List<MyElement> elements = new ArrayList<MyElement>();
 
@@ -46,6 +46,18 @@ public class MyRun {
 
 	@Override
 	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (MyElement element : elements) {
+			sb.append(element.toString());
+		}
+
+		return sb.toString();
+	}
+
+	@Override
+	public String toHTML() {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -180,6 +192,7 @@ public class MyRun {
 		return colours.get(ms_word);
 	}
 
+	@Override
 	public String getHighlight() {
 		for (MyElement element : elements) {
 			String highlight = element.getHighlight();
@@ -190,6 +203,7 @@ public class MyRun {
 		return null;
 	}
 
+	@Override
 	public boolean getBold() {
 		for (MyElement element : elements) {
 			boolean bold = element.getBold();
@@ -200,6 +214,7 @@ public class MyRun {
 		return false;
 	}
 
+	@Override
 	public String getUnderline() {
 		for (MyElement element : elements) {
 			String underline = element.getUnderline();
@@ -210,6 +225,7 @@ public class MyRun {
 		return null;
 	}
 
+	@Override
 	public String getSize() {
 		for (MyElement element : elements) {
 			String size = element.getSize();
@@ -220,6 +236,7 @@ public class MyRun {
 		return null;
 	}
 
+	@Override
 	public String getColour() {
 		for (MyElement element : elements) {
 			String colour = element.getColour();
@@ -230,6 +247,7 @@ public class MyRun {
 		return null;
 	}
 
+	@Override
 	public boolean getItalic() {
 		for (MyElement element : elements) {
 			boolean italic = element.getItalic();
@@ -240,6 +258,7 @@ public class MyRun {
 		return false;
 	}
 
+	@Override
 	public boolean getStrike() {
 		for (MyElement element : elements) {
 			boolean strike = element.getStrike();
@@ -250,6 +269,7 @@ public class MyRun {
 		return false;
 	}
 
+	@Override
 	public String getVerticalAlign() {
 		for (MyElement element : elements) {
 			String alignType = element.getVerticalAlign();
