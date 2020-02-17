@@ -126,7 +126,6 @@ public class MyTableRow {
 
 		// If the first line starts with the day-name, remove it
 		String line = lines.get(0);
-		line = line.replaceAll("\\<.*?\\>", "");
 		Matcher matcher = Day.getMatcher(line);
 		if (matcher.find()) {
 
