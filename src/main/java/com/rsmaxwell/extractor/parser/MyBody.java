@@ -77,7 +77,7 @@ public class MyBody {
 		return sb.toString();
 	}
 
-	private static String yearMonthPatternString = "([\\d]{4})[\\s]+([a-zA-Z]{4,10})";
+	private static String yearMonthPatternString = "([\\d]{4})[\\s]+([a-zA-Z]{3,9})";
 	private static Pattern yearMonthPattern = Pattern.compile(yearMonthPatternString);
 
 	public void toOutput(OutputDocument outputDocument) throws Exception {
