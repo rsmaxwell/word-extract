@@ -39,10 +39,6 @@ public class MyTableColumn {
 		return tableColumn;
 	}
 
-	public boolean isDivider() {
-		return (toString().length() == 0);
-	}
-
 	public int getDayOfMonth() throws Exception {
 
 		String string = toString();
@@ -76,7 +72,7 @@ public class MyTableColumn {
 		return sb.toString();
 	}
 
-	public List<String> toList() {
+	public List<String> toHtmlList() {
 
 		List<String> lines = new ArrayList<String>();
 
@@ -91,7 +87,7 @@ public class MyTableColumn {
 				}
 				paragraphCount++;
 			}
-			sb.append(element.toString());
+			sb.append(element.toHtml());
 		}
 		if (sb.length() > 0) {
 			lines.add(sb.toString());

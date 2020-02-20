@@ -7,7 +7,7 @@ public abstract class MyElement implements MyNode {
 		return "";
 	}
 
-	public String toHTML() {
+	public String toHtml() {
 		return "";
 	}
 

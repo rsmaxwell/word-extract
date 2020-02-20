@@ -2,6 +2,8 @@ package com.rsmaxwell.extractor.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,18 +77,31 @@ public class MyBody {
 		return sb.toString();
 	}
 
+	private static String yearMonthPatternString = "([\\d]{4})[\\s]+([a-zA-Z]{4,10})";
+	private static Pattern yearMonthPattern = Pattern.compile(yearMonthPatternString);
+
 	public void toOutput(OutputDocument outputDocument) throws Exception {
 
 		for (MyElement element : elements) {
 
 			if (element instanceof MyParagraph) {
 
-				String string = element.toString();
-				try {
-					Extractor extractor = Extractor.instance;
-					extractor.month = Month.toInt(string);
+				String text = element.toString();
+				Matcher yearMonthMatcher = yearMonthPattern.matcher(text);
+				boolean matches = yearMonthMatcher.matches();
 
-				} catch (Exception e) {
+				if (matches) {
+					Extractor extractor = Extractor.instance;
+
+					String yearString = yearMonthMatcher.group(1);
+					int year = Integer.parseInt(yearString);
+
+					if (extractor.year != year) {
+						throw new Exception("Unexpected year: " + year);
+					}
+
+					String monthString = yearMonthMatcher.group(2);
+					extractor.month = Month.toInt(monthString);
 				}
 
 			} else if (element instanceof MyTable) {

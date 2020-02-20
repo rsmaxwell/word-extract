@@ -45,12 +45,12 @@ public class MyParagraph extends MyElement {
 	}
 
 	@Override
-	public String toHTML() {
+	public String toHtml() {
 
 		StringBuilder sb = new StringBuilder();
 
 		for (MyRun run : runs) {
-			sb.append(run.toHTML());
+			sb.append(run.toHtml());
 		}
 
 		return sb.toString();

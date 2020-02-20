@@ -49,97 +49,98 @@ public class MyTableRow {
 
 		String eol = System.getProperty("line.separator");
 
+		switch (columns.size()) {
+
 		// Check the the day-of-the-month
-		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(2).isDivider())) {
+		case 3: // day-of-month
+		{
 			try {
 				int dayOfMonth = columns.get(1).getDayOfMonth();
 				return "---[ " + dayOfMonth + " ]------------ " + eol;
 			} catch (Exception e) {
 			}
+			break;
 		}
 
-		// Concatenate the block of text
-		StringBuilder sb1 = new StringBuilder();
-		for (MyTableColumn column : columns) {
-			sb1.append(column.toString());
+		case 2: // html/text
+			// Concatenate the block of text
+			StringBuilder sb1 = new StringBuilder();
+			for (MyTableColumn column : columns) {
+				sb1.append(column.toString());
+			}
+			String string = sb1.toString();
+
+			StringBuilder sb2 = new StringBuilder();
+
+			// Check the the day-name
+			Matcher matcher = Day.getMatcher(string);
+			if (matcher.find()) {
+				String day = matcher.group(1);
+				String text = matcher.group(2);
+
+				sb2.append("---[ " + day + " ]---" + eol);
+				sb2.append(text + eol);
+			} else {
+				// Otherwise it is plain text
+				sb2.append(string);
+			}
+
+			return sb2.toString();
 		}
-		String string = sb1.toString();
 
-		StringBuilder sb2 = new StringBuilder();
-
-		// Check the the day-name
-		Matcher matcher = Day.getMatcher(string);
-		if (matcher.find()) {
-			String day = matcher.group(1);
-			String text = matcher.group(2);
-
-			sb2.append("---[ " + day + " ]---" + eol);
-			sb2.append(text + eol);
-		} else {
-			// Otherwise it is plain text
-			sb2.append(string);
-		}
-
-		return sb2.toString();
+		return "";
 	}
 
 	public void toOutput(OutputDocument outputDocument) throws Exception {
 
 		Extractor extractor = Extractor.instance;
 
-		// Check the the day-of-month
-		if ((columns.size() == 3) && (columns.get(0).isDivider()) && (columns.get(2).isDivider())) {
-			try {
-				extractor.day = columns.get(1).getDayOfMonth();
+		switch (columns.size()) {
 
-				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
-				fragment.source = extractor.source;
-				outputDocument.fragments.add(fragment);
-				return;
+		case 3: {
+			// day-of-month
+			extractor.day = columns.get(1).getDayOfMonth();
+			Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
+			fragment.source = extractor.source;
+			outputDocument.fragments.add(fragment);
 
-			} catch (Exception e) {
+			// day-name
+			String line = columns.get(0).toString();
+			Matcher matcher = Day.getMatcher(line);
+			if (matcher.find()) {
+				String string = matcher.group(1);
+				int dayOfWeek = Day.toInt(string);
+				Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
 			}
+			break;
 		}
 
-		// Check there is at least one day in the given outputMonth
-		int size = outputDocument.fragments.size();
-		if (size <= 0) {
-			throw new Exception("The month does not contain any days");
+		case 2: // html/text
+
+			// Concatenate the block of lines (from column 0) and notes (from column 1)
+			List<String> lines = new ArrayList<String>();
+			List<String> notes = new ArrayList<String>();
+
+			lines.addAll(columns.get(0).toHtmlList());
+			notes.addAll(columns.get(1).toHtmlList());
+
+			// Check there is at least one line
+			if (lines.size() <= 0) {
+				return;
+			}
+
+			// Add this line to the last fragment
+			int size = outputDocument.fragments.size();
+			if (size <= 0) {
+				throw new Exception("The month does not contain any days");
+			}
+
+			Fragment fragment = outputDocument.fragments.get(size - 1);
+			fragment.html = buildLine(lines);
+			fragment.notes = buildLine(notes);
+			break;
 		}
 
-		// Check there are exactly 2 columns in this row
-		if (columns.size() != 2) {
-			return;
-		}
-
-		// Concatenate the block of lines (from column 0) and notes (from column 1)
-		List<String> lines = new ArrayList<String>();
-		List<String> notes = new ArrayList<String>();
-
-		lines.addAll(columns.get(0).toList());
-		notes.addAll(columns.get(1).toList());
-
-		// Check there is at least one line
-		if (lines.size() <= 0) {
-			return;
-		}
-
-		// If the first line starts with the day-name, remove it
-		String line = lines.get(0);
-		Matcher matcher = Day.getMatcher(line);
-		if (matcher.find()) {
-
-			String string = matcher.group(1);
-			int dayOfWeek = Day.toInt(string);
-			Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
-
-			lines.set(0, matcher.group(2));
-		}
-
-		Fragment outputDay = outputDocument.fragments.get(size - 1);
-
-		outputDay.html = buildLine(lines);
-		outputDay.notes = buildLine(notes);
 	}
 
 	private String buildLine(List<String> array) throws Exception {

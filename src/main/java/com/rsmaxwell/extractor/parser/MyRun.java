@@ -57,7 +57,7 @@ public class MyRun extends MyElement {
 	}
 
 	@Override
-	public String toHTML() {
+	public String toHtml() {
 
 		StringBuilder sb = new StringBuilder();
 
