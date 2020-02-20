@@ -118,7 +118,11 @@ public class MyTableRow {
 					Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
 				}
 			} catch (Exception e) {
-				throw new Exception("columns: { \"" + columns.get(0) + "\", \"" + columns.get(1) + "\", \"" + columns.get(2) + "\" }", e);
+				StringBuilder sb = new StringBuilder();
+				sb.append("Unexpected day header\n");
+				sb.append(extractor.year + "-" + extractor.month + "-" + extractor.day + "-" + extractor.order + "   " + extractor.source + "\n");
+				sb.append("columns: { \"" + columns.get(0) + "\", \"" + columns.get(1) + "\", \"" + columns.get(2) + "\" }\n");
+				throw new Exception(sb.toString(), e);
 			}
 			break;
 		}
