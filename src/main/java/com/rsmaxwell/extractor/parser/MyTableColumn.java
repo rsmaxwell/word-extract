@@ -50,7 +50,7 @@ public class MyTableColumn {
 		Matcher m = r.matcher(string);
 
 		if (!m.find()) {
-			throw new Exception("not a day-of-week: " + string);
+			throw new Exception("not a day-of-week: [" + string + "]");
 		}
 
 		String strNum = m.group(2);

@@ -98,19 +98,27 @@ public class MyTableRow {
 		switch (columns.size()) {
 
 		case 3: {
-			// day-of-month
-			extractor.day = columns.get(1).getDayOfMonth();
-			Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
-			fragment.source = extractor.source;
-			outputDocument.fragments.add(fragment);
 
-			// day-name
-			String line = columns.get(0).toString();
-			Matcher matcher = Day.getMatcher(line);
-			if (matcher.find()) {
-				String string = matcher.group(1);
-				int dayOfWeek = Day.toInt(string);
-				Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
+			// System.out.println("columns: { \"" + columns.get(0) + "\", \"" +
+			// columns.get(1) + "\", \"" + columns.get(2) + "\" }");
+
+			try {
+				// day-of-month
+				extractor.day = columns.get(1).getDayOfMonth();
+				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
+				fragment.source = extractor.source;
+				outputDocument.fragments.add(fragment);
+
+				// day-name
+				String line = columns.get(0).toString();
+				Matcher matcher = Day.getMatcher(line);
+				if (matcher.find()) {
+					String string = matcher.group(1);
+					int dayOfWeek = Day.toInt(string);
+					Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
+				}
+			} catch (Exception e) {
+				throw new Exception("columns: { \"" + columns.get(0) + "\", \"" + columns.get(1) + "\", \"" + columns.get(2) + "\" }", e);
 			}
 			break;
 		}
