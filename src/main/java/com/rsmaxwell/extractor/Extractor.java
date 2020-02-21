@@ -35,9 +35,6 @@ public class Extractor {
 	public String wordFilename;
 	public String imageFilename;
 
-	private String outputDirName;
-	private File outputDir;
-
 	private String workingDirName;
 	private File workingDir;
 
@@ -47,14 +44,7 @@ public class Extractor {
 	private String fragmentBaseName;
 	private File fragmentBase;
 
-	private String templateDirName;
-	private File templateDir;
-
 	public static Extractor instance;
-
-	private static Extractor getInstance() {
-		return instance;
-	}
 
 	public Extractor(String outputDirName) {
 
