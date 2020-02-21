@@ -117,7 +117,11 @@ public class MyRun extends MyElement {
 			sb2.append("<font ");
 
 			if (size != null) {
-				sb2.append(separator + "size=" + size + "pt");
+
+				int twicePointSize = Integer.parseInt(size);
+				int point = twicePointSize / 2;
+
+				sb2.append(separator + "size=" + point + "pt");
 				separator = " ";
 			}
 
