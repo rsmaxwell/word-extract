@@ -189,7 +189,7 @@ public class Extractor {
 			}
 
 			// ---------------------------------------------------------------------
-			// This fragment depends on the word file, so ad it as a dependancy
+			// This fragment depends on the word file, so add it as a dependency
 			// ---------------------------------------------------------------------
 			deps.add(fragmentDirName + "/fragment.json");
 		}
@@ -208,7 +208,7 @@ public class Extractor {
 		sb.append(" &: ");
 		sb.append(wordFilename);
 		sb.append("\n");
-		sb.append("\t./extract $^");
+		sb.append("\t./extract " + wordFilename + " " + imageFilename);
 		sb.append("\n");
 
 		String basename = getBasename(wordFilename);
