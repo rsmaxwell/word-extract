@@ -32,10 +32,8 @@ public class Extractor {
 	public int month;
 	public int day;
 	public String order;
-	public String source;
-
-	private String inputDirName;
-	private File inputDir;
+	public String wordFilename;
+	public String imageFilename;
 
 	private String outputDirName;
 	private File outputDir;
@@ -58,10 +56,7 @@ public class Extractor {
 		return instance;
 	}
 
-	public Extractor(String inputDirName, String outputDirName) {
-
-		this.inputDirName = inputDirName;
-		inputDir = new File(inputDirName);
+	public Extractor(String outputDirName) {
 
 		this.workingDirName = outputDirName + "/working";
 		workingDir = new File(workingDirName);
@@ -73,9 +68,6 @@ public class Extractor {
 		this.fragmentBaseName = outputDirName + "/fragments";
 		fragmentBase = new File(fragmentBaseName);
 		fragmentBase.mkdirs();
-
-		templateDirName = inputDir + "/templates";
-		templateDir = new File(templateDirName);
 	}
 
 	public void unzip(String archive) throws IOException {
@@ -139,14 +131,15 @@ public class Extractor {
 		return destFile;
 	}
 
-	public void toJson(String wordPathname) throws Exception {
+	public void toJson(String wordFilename, String imageFilename) throws Exception {
 
 		// ---------------------------------------------------------------------
 		// Find the year which this word file refers to
 		// ---------------------------------------------------------------------
-		this.year = FindYear.get(wordPathname);
-		this.order = getBasename(wordPathname);
-		this.source = wordPathname;
+		this.year = FindYear.get(wordFilename);
+		this.order = getBasename(wordFilename);
+		this.wordFilename = wordFilename;
+		this.imageFilename = imageFilename;
 
 		// ---------------------------------------------------------------------
 		// Parse the MS Word file into an output document
@@ -213,12 +206,12 @@ public class Extractor {
 		}
 
 		sb.append(" &: ");
-		sb.append(wordPathname);
+		sb.append(wordFilename);
 		sb.append("\n");
 		sb.append("\t./extract $^");
 		sb.append("\n");
 
-		String basename = getBasename(wordPathname);
+		String basename = getBasename(wordFilename);
 
 		File dependancyFile = new File(dependanciesDir, basename + ".mk");
 		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {

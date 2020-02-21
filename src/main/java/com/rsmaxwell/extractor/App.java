@@ -27,11 +27,18 @@ public class App {
 				            .desc("show program help")
 				            .build();
 		
-		Option wordFile = Option.builder("w")
-				            .longOpt("wordFile")
-				            .argName("wordFile")
+		Option wordFilename = Option.builder("w")
+				            .longOpt("word")
+				            .argName("word document")
 				            .hasArg()
 				            .desc("set the word file (*.docx)")
+				            .build();
+		
+		Option imageFilename = Option.builder("i")
+				            .longOpt("image")
+				            .argName("image filename")
+				            .hasArg()
+				            .desc("set the image file (*.jpg)")
 				            .build();
 		
 		Option outputFile = Option.builder("o")
@@ -40,20 +47,13 @@ public class App {
                             .hasArg()
                             .desc("set the output dir")
                             .build();
-		
-		Option inputDir = Option.builder("i")
-                            .longOpt("inputDir")
-                            .argName("inputDir")
-                            .hasArg()
-                            .desc("set the input dir")
-                            .build();
 		// @formatter:on
 
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
-		options.addOption(wordFile);
-		options.addOption(inputDir);
+		options.addOption(wordFilename);
+		options.addOption(imageFilename);
 		options.addOption(outputFile);
 
 		CommandLineParser parser = new DefaultParser();
@@ -90,18 +90,18 @@ public class App {
 			throw new Exception("file not found: " + wordFileName);
 		}
 
-		String inputDirName = line.getOptionValue("i", "input");
-		File inputDir = new File(inputDirName);
-		if (!inputDir.exists()) {
-			throw new Exception("dir not found: " + inputDirName);
-		}
-
 		String outputDirName = line.getOptionValue("o", "output");
 
-		Extractor extractor = new Extractor(inputDirName, outputDirName);
+		if (!line.hasOption('i')) {
+			System.out.println("Missing required option -i | --imageFilename");
+			return;
+		}
+		String imageFilename = line.getOptionValue("i", "");
+
+		Extractor extractor = new Extractor(outputDirName);
 		Extractor.instance = extractor;
 
 		extractor.unzip(wordFileName);
-		extractor.toJson(wordFileName);
+		extractor.toJson(wordFileName, imageFilename);
 	}
 }

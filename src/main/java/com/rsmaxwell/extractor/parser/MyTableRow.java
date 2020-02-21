@@ -99,14 +99,12 @@ public class MyTableRow {
 
 		case 3: {
 
-			// System.out.println("columns: { \"" + columns.get(0) + "\", \"" +
-			// columns.get(1) + "\", \"" + columns.get(2) + "\" }");
-
 			try {
 				// day-of-month
 				extractor.day = columns.get(1).getDayOfMonth();
 				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
-				fragment.source = extractor.source;
+				fragment.wordFilename = extractor.wordFilename;
+				fragment.imageFilename = extractor.imageFilename;
 				fragment.check();
 				outputDocument.fragments.add(fragment);
 
@@ -121,7 +119,8 @@ public class MyTableRow {
 			} catch (Exception e) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Unexpected day header\n");
-				sb.append(extractor.year + "-" + extractor.month + "-" + extractor.day + "-" + extractor.order + "   " + extractor.source + "\n");
+				sb.append(
+						extractor.year + "-" + extractor.month + "-" + extractor.day + "-" + extractor.order + "   " + extractor.wordFilename + "\n");
 				sb.append("columns: { \"" + columns.get(0) + "\", \"" + columns.get(1) + "\", \"" + columns.get(2) + "\" }\n");
 				throw new Exception(sb.toString(), e);
 			}
