@@ -51,6 +51,8 @@ public class MyRunProperties extends MyElement {
 					runProperties.elements.add(MyStrike.create(childElement, level + 1));
 				} else if ("w:i".contentEquals(nodeName)) {
 					runProperties.elements.add(MyItalic.create(childElement, level + 1));
+				} else if ("w:iCs".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
