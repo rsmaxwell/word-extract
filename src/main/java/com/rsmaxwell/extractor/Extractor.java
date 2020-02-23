@@ -166,7 +166,7 @@ public class Extractor {
 			// Write out the fragment as a json info file and a separate text file
 			// with the html content
 			// ---------------------------------------------------------------------
-			String fragmentDirName = fragmentBaseName + "/" + dirName;
+			String fragmentDirName = fragmentBaseName + "/" + fragment.year + "/" + dirName;
 			File fragmentDir = new File(fragmentDirName);
 			fragmentDir.mkdirs();
 
