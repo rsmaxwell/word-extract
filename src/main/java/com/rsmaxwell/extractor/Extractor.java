@@ -22,8 +22,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rsmaxwell.diaryjson.Fragment;
 import com.rsmaxwell.diaryjson.OutputDocument;
+import com.rsmaxwell.diaryjson.fragment.Fragment;
 import com.rsmaxwell.extractor.parser.MyDocument;
 
 public class Extractor {
