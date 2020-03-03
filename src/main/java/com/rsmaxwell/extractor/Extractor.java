@@ -34,6 +34,7 @@ public class Extractor {
 	public String order;
 	public String wordFilename;
 	public String imageFilename;
+	public String diary;
 
 	private String workingDirName;
 	private File workingDir;
@@ -121,7 +122,7 @@ public class Extractor {
 		return destFile;
 	}
 
-	public void toJson(String wordFilename, String imageFilename) throws Exception {
+	public void toJson(String wordFilename, String diary, String imageFilename) throws Exception {
 
 		// ---------------------------------------------------------------------
 		// Find the year which this word file refers to
@@ -129,6 +130,7 @@ public class Extractor {
 		this.year = FindYear.get(wordFilename);
 		this.order = getBasename(wordFilename);
 		this.wordFilename = wordFilename;
+		this.diary = diary;
 		this.imageFilename = imageFilename;
 
 		// ---------------------------------------------------------------------

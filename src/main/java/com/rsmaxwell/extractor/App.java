@@ -34,6 +34,13 @@ public class App {
 				            .desc("set the word file (*.docx)")
 				            .build();
 		
+		Option diary = Option.builder("d")
+				            .longOpt("diary")
+				            .argName("diary name")
+				            .hasArg()
+				            .desc("set the diary name")
+				            .build();
+		
 		Option imageFilename = Option.builder("i")
 				            .longOpt("image")
 				            .argName("image filename")
@@ -53,6 +60,7 @@ public class App {
 		options.addOption(version);
 		options.addOption(help);
 		options.addOption(wordFilename);
+		options.addOption(diary);
 		options.addOption(imageFilename);
 		options.addOption(outputFile);
 
@@ -92,6 +100,12 @@ public class App {
 
 		String outputDirName = line.getOptionValue("o", "output");
 
+		if (!line.hasOption('d')) {
+			System.out.println("Missing required option -d | --diary");
+			return;
+		}
+		String diary = line.getOptionValue("d", "");
+
 		if (!line.hasOption('i')) {
 			System.out.println("Missing required option -i | --imageFilename");
 			return;
@@ -102,6 +116,6 @@ public class App {
 		Extractor.instance = extractor;
 
 		extractor.unzip(wordFileName);
-		extractor.toJson(wordFileName, imageFilename);
+		extractor.toJson(wordFileName, diary, imageFilename);
 	}
 }
