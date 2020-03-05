@@ -200,7 +200,7 @@ public class Extractor {
 		sb.append(" &: ");
 		sb.append(wordFilename);
 		sb.append("\n");
-		sb.append("\t./extract " + wordFilename + " " + imageFilename);
+		sb.append("\t./extract " + wordFilename + " " + diary + " " + imageFilename);
 		sb.append("\n");
 
 		String basename = getBasename(wordFilename);
