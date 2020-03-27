@@ -8,16 +8,16 @@ public class MyUnderline extends MyElement {
 
 	public static MyUnderline create(Element element, int level) throws Exception {
 
-		MyUnderline myHighlight = new MyUnderline();
+		MyUnderline myUnderline = new MyUnderline();
 
 		String value = element.getAttribute("w:val");
 		if (value != null) {
 			if (value.length() > 0) {
-				myHighlight.underline = value;
+				myUnderline.underline = value;
 			}
 		}
 
-		return myHighlight;
+		return myUnderline;
 	}
 
 	@Override
