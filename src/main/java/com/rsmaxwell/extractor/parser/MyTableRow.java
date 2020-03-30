@@ -149,8 +149,23 @@ public class MyTableRow {
 			}
 
 			Fragment fragment = outputDocument.fragments.get(size - 1);
-			fragment.html = buildLine(lines);
-			fragment.notes = buildLine(notes);
+
+			try {
+				if (fragment.html == null) {
+					fragment.html = buildLine(lines);
+				} else {
+					fragment.html += buildLine(lines);
+				}
+
+				if (fragment.notes == null) {
+					fragment.notes = buildLine(notes);
+				} else {
+					fragment.notes += buildLine(notes);
+				}
+			} catch (Exception e) {
+				throw new Exception("fragment: " + fragment.toString(), e);
+			}
+
 			break;
 		}
 
@@ -168,7 +183,14 @@ public class MyTableRow {
 				separator = " ";
 			}
 		}
-		return (line == null) ? null : "<p>" + line + "</p>\n";
+
+		if (line == null) {
+			return null;
+		} else if (line.length() == 0) {
+			throw new Exception("Empty paragraph");
+		} else {
+			return "<p>" + line + "</p>\n";
+		}
 	}
 
 	private String join(String one, String two, String separator) throws Exception {
