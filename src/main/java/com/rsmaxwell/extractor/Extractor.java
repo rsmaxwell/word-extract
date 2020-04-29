@@ -42,7 +42,7 @@ public class Extractor {
 	private String dependanciesDirName;
 	private File dependanciesDir;
 
-	private String fragmentBaseName;
+	private String baseDirName;
 	private File fragmentBase;
 
 	public static Extractor instance;
@@ -56,8 +56,8 @@ public class Extractor {
 		dependanciesDir = new File(dependanciesDirName);
 		dependanciesDir.mkdirs();
 
-		this.fragmentBaseName = outputDirName + "/fragments";
-		fragmentBase = new File(fragmentBaseName);
+		this.baseDirName = outputDirName + "/fragments";
+		fragmentBase = new File(baseDirName);
 		fragmentBase.mkdirs();
 	}
 
@@ -162,14 +162,14 @@ public class Extractor {
 				throw new Exception("null html found in fragment: " + fragment);
 			}
 
-			String dirName = fragment.toDirectoryName();
+			String fragmentDirName = fragment.toDirectoryName();
 
 			// ---------------------------------------------------------------------
 			// Write out the fragment as a json info file and a separate text file
 			// with the html content
 			// ---------------------------------------------------------------------
-			String fragmentDirName = fragmentBaseName + "/" + fragment.year + "/" + dirName;
-			File fragmentDir = new File(fragmentDirName);
+			String fragmentPathName = baseDirName + "/" + fragmentDirName;
+			File fragmentDir = new File(fragmentPathName);
 			fragmentDir.mkdirs();
 
 			File jsonFile = new File(fragmentDir, "fragment.json");
@@ -183,7 +183,7 @@ public class Extractor {
 			// ---------------------------------------------------------------------
 			// This fragment depends on the word file, so add it as a dependency
 			// ---------------------------------------------------------------------
-			deps.add(fragmentDirName + "/fragment.json");
+			deps.add(fragmentPathName + "/fragment.json");
 		}
 
 		// ---------------------------------------------------------------------
