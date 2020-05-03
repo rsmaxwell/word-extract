@@ -4,14 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -39,9 +35,6 @@ public class Extractor {
 	private String workingDirName;
 	private File workingDir;
 
-	private String dependanciesDirName;
-	private File dependanciesDir;
-
 	private String baseDirName;
 	private File fragmentBase;
 
@@ -52,16 +45,12 @@ public class Extractor {
 		this.workingDirName = outputDirName + "/working";
 		workingDir = new File(workingDirName);
 
-		this.dependanciesDirName = outputDirName + "/dependancies";
-		dependanciesDir = new File(dependanciesDirName);
-		dependanciesDir.mkdirs();
-
 		this.baseDirName = outputDirName + "/fragments";
 		fragmentBase = new File(baseDirName);
 		fragmentBase.mkdirs();
 	}
 
-	public void unzip(String archive) throws IOException {
+	public void unzip(File archive) throws IOException {
 
 		clearWorkingDirectory(workingDir);
 
@@ -148,11 +137,6 @@ public class Extractor {
 		OutputDocument outputDocument = document.toOutput();
 
 		// ---------------------------------------------------------------------
-		// Create a buffer to collect the dependencies
-		// ---------------------------------------------------------------------
-		Set<String> deps = new HashSet<String>();
-
-		// ---------------------------------------------------------------------
 		// Write out the fragments to disk
 		// ---------------------------------------------------------------------
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -179,36 +163,6 @@ public class Extractor {
 			try (BufferedWriter writer = Files.newBufferedWriter(htmlPath)) {
 				writer.write(fragment.html);
 			}
-
-			// ---------------------------------------------------------------------
-			// This fragment depends on the word file, so add it as a dependency
-			// ---------------------------------------------------------------------
-			deps.add(fragmentPathName + "/fragment.json");
-		}
-
-		// ---------------------------------------------------------------------
-		// Write out the makefile
-		// ---------------------------------------------------------------------
-		String separator = "";
-		StringBuilder sb = new StringBuilder();
-		for (String dep : deps) {
-			sb.append(separator);
-			sb.append(dep);
-			separator = " ";
-		}
-
-		sb.append(" &: ");
-		sb.append(wordFilename);
-		sb.append("\n");
-		sb.append("\t./extract " + wordFilename + " " + diary + " " + imageFilename);
-		sb.append("\n");
-
-		String basename = getBasename(wordFilename);
-
-		File dependancyFile = new File(dependanciesDir, basename + ".mk");
-		try (FileWriter dependancyWriter = new FileWriter(dependancyFile, false);) {
-			PrintWriter dependancyPrintWriter = new PrintWriter(dependancyWriter);
-			dependancyPrintWriter.println(sb.toString());
 		}
 	}
 

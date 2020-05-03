@@ -16,10 +16,10 @@ public class App {
 
 		// @formatter:off
 		Option version = Option.builder("v")
-				               .longOpt("version")
-				               .argName("version")
-				               .desc("show program version")
-				               .build();
+				            .longOpt("version")
+				            .argName("version")
+				            .desc("show program version")
+				            .build();
 		
 		Option help = Option.builder("h")
 				            .longOpt("help")
@@ -27,12 +27,19 @@ public class App {
 				            .desc("show program help")
 				            .build();
 		
-		Option wordFilename = Option.builder("w")
-				            .longOpt("word")
-				            .argName("word document")
+		Option rootDir = Option.builder("r")
+				            .longOpt("root")
+				            .argName("root directory")
 				            .hasArg()
-				            .desc("set the word file (*.docx)")
+				            .desc("root directory")
 				            .build();
+
+		Option wordFile = Option.builder("w")
+	                        .longOpt("word")
+	                        .argName("word file")
+	                        .hasArg()
+	                        .desc("word file")
+	                        .build();
 		
 		Option diary = Option.builder("d")
 				            .longOpt("diary")
@@ -41,7 +48,7 @@ public class App {
 				            .desc("set the diary name")
 				            .build();
 		
-		Option imageFilename = Option.builder("i")
+		Option imageFile = Option.builder("i")
 				            .longOpt("image")
 				            .argName("image filename")
 				            .hasArg()
@@ -59,9 +66,10 @@ public class App {
 		Options options = new Options();
 		options.addOption(version);
 		options.addOption(help);
-		options.addOption(wordFilename);
+		options.addOption(rootDir);
+		options.addOption(wordFile);
 		options.addOption(diary);
-		options.addOption(imageFilename);
+		options.addOption(imageFile);
 		options.addOption(outputFile);
 
 		CommandLineParser parser = new DefaultParser();
@@ -87,16 +95,21 @@ public class App {
 
 		CommandLine line = getCommandLine(args);
 
+		if (!line.hasOption('r')) {
+			System.out.println("Missing required option -r | --root");
+			return;
+		}
+		String rootDirName = line.getOptionValue("r");
+		File rootDir = new File(rootDirName);
+		if (!rootDir.exists()) {
+			throw new Exception("file not found: " + rootDirName);
+		}
+
 		if (!line.hasOption('w')) {
 			System.out.println("Missing required option -w | --wordFile");
 			return;
 		}
-
-		String wordFileName = line.getOptionValue("w");
-		File wordFile = new File(wordFileName);
-		if (!wordFile.exists()) {
-			throw new Exception("file not found: " + wordFileName);
-		}
+		String wordFilename = line.getOptionValue("w");
 
 		String outputDirName = line.getOptionValue("o", "output");
 
@@ -115,7 +128,13 @@ public class App {
 		Extractor extractor = new Extractor(outputDirName);
 		Extractor.instance = extractor;
 
-		extractor.unzip(wordFileName);
-		extractor.toJson(wordFileName, diary, imageFilename);
+		String wordPathName = rootDirName + "/" + diary + "/metadata/word/" + wordFilename;
+		File wordFile = new File(wordPathName);
+		if (!wordFile.exists()) {
+			throw new Exception("file not found: " + wordPathName);
+		}
+
+		extractor.unzip(wordFile);
+		extractor.toJson(wordFilename, diary, imageFilename);
 	}
 }
