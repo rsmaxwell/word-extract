@@ -103,7 +103,6 @@ public class MyTableRow {
 				// day-of-month
 				extractor.day = columns.get(1).getDayOfMonth();
 				Fragment fragment = new Fragment(extractor.year, extractor.month, extractor.day, extractor.order);
-				fragment.wordFilename = extractor.wordFilename;
 				fragment.diary = extractor.diary;
 				fragment.imageFilename = extractor.imageFilename;
 				fragment.check();
