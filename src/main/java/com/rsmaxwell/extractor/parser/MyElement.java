@@ -2,6 +2,8 @@ package com.rsmaxwell.extractor.parser;
 
 public abstract class MyElement implements MyNode {
 
+	protected static final String LS = System.getProperty("line.separator");
+
 	@Override
 	public String toString() {
 		return "";

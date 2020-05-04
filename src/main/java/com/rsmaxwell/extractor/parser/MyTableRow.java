@@ -13,7 +13,7 @@ import com.rsmaxwell.diaryjson.OutputDocument;
 import com.rsmaxwell.diaryjson.fragment.Fragment;
 import com.rsmaxwell.extractor.Extractor;
 
-public class MyTableRow {
+public class MyTableRow extends MyElement {
 
 	private ArrayList<MyTableColumn> columns = new ArrayList<MyTableColumn>();
 
@@ -47,8 +47,6 @@ public class MyTableRow {
 	@Override
 	public String toString() {
 
-		String eol = System.getProperty("line.separator");
-
 		switch (columns.size()) {
 
 		// Check the the day-of-the-month
@@ -56,7 +54,7 @@ public class MyTableRow {
 		{
 			try {
 				int dayOfMonth = columns.get(1).getDayOfMonth();
-				return "---[ " + dayOfMonth + " ]------------ " + eol;
+				return "---[ " + dayOfMonth + " ]------------ " + LS;
 			} catch (Exception e) {
 			}
 			break;
@@ -78,8 +76,8 @@ public class MyTableRow {
 				String day = matcher.group(1);
 				String text = matcher.group(2);
 
-				sb2.append("---[ " + day + " ]---" + eol);
-				sb2.append(text + eol);
+				sb2.append("---[ " + day + " ]---" + LS);
+				sb2.append(text + LS);
 			} else {
 				// Otherwise it is plain text
 				sb2.append(string);
@@ -176,7 +174,7 @@ public class MyTableRow {
 		for (int i = 0; i < array.size(); i++) {
 			String next = array.get(i);
 			if (next.length() == 0) {
-				separator = "</p>\n<p>";
+				separator = "</p>" + LS + "<p>";
 			} else {
 				line = join(line, next, separator);
 				separator = " ";
@@ -188,7 +186,7 @@ public class MyTableRow {
 		} else if (line.length() == 0) {
 			throw new Exception("Empty paragraph");
 		} else {
-			return "<p>" + line + "</p>\n";
+			return "<p>" + line + "</p>" + LS;
 		}
 	}
 
