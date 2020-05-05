@@ -140,6 +140,9 @@ public class MyRun extends MyElement {
 		String colour = getColour();
 
 		if ((size != null) || (colour != null)) {
+			boolean addSize = false;
+			boolean addColour = false;
+
 			String separator = "";
 			StringBuilder sb2 = new StringBuilder();
 			sb2.append("<font ");
@@ -147,6 +150,7 @@ public class MyRun extends MyElement {
 			if (size != null) {
 				int wordFontSize = Integer.parseInt(size);
 				if (wordFontSize != 24) {
+					addSize = true;
 
 					double wordFontSize2 = wordFontSize;
 					double point = wordFontSize2 / 8.0;
@@ -158,14 +162,17 @@ public class MyRun extends MyElement {
 			}
 
 			if (colour != null) {
+				addColour = true;
 				sb2.append(separator + "color=#" + colour);
 				separator = " ";
 			}
 
-			sb2.append(">");
-			sb2.append(text);
-			sb2.append("</font>");
-			text = sb2.toString();
+			if (addSize || addColour) {
+				sb2.append(">");
+				sb2.append(text);
+				sb2.append("</font>");
+				text = sb2.toString();
+			}
 		}
 
 		// --------------------------------------------
