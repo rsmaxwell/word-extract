@@ -35,6 +35,8 @@ public class MyRun extends MyElement {
 					run.elements.add(MyTab.create(childElement, level + 1));
 				} else if ("w:lastRenderedPageBreak".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:drawing".contentEquals(nodeName)) {
+					run.elements.add(MyDrawing.create(childElement, level + 1));
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
@@ -42,6 +44,18 @@ public class MyRun extends MyElement {
 		}
 
 		return run;
+	}
+
+	@Override
+	public List<String> getPictures() {
+
+		List<String> allPictures = new ArrayList<String>();
+		for (MyElement element : elements) {
+			List<String> picture = element.getPictures();
+			allPictures.addAll(picture);
+		}
+
+		return allPictures;
 	}
 
 	@Override
@@ -84,6 +98,20 @@ public class MyRun extends MyElement {
 		}
 
 		// --------------------------------------------
+		// Wrap the text with a highlight span
+		// --------------------------------------------
+		String runStyle = getRunStyle();
+		if (runStyle != null) {
+			String colour = runStyleToHighlightColour(runStyle);
+
+			if (colour == null) {
+				throw new RuntimeException("unexpected runStyle value: " + runStyle);
+			}
+
+			text = "<span class=highlight_" + colour + ">" + text + "</span>";
+		}
+
+		// --------------------------------------------
 		// Wrap the text with a bold span
 		// --------------------------------------------
 		boolean bold = getBold();
@@ -118,10 +146,11 @@ public class MyRun extends MyElement {
 
 			if (size != null) {
 
-				int twicePointSize = Integer.parseInt(size);
-				int point = twicePointSize / 2;
+				double wordFontSize = Integer.parseInt(size);
+				double point = wordFontSize / 8.0;
+				String pointString = String.format("%.1f", point);
 
-				sb2.append(separator + "size=" + point + "pt");
+				sb2.append(separator + "size=" + pointString + "pt");
 				separator = " ";
 			}
 
@@ -196,10 +225,44 @@ public class MyRun extends MyElement {
 		return colours.get(ms_word);
 	}
 
+	private static Map<String, String> runStyleToColourMap = new HashMap<String, String>();
+	static {
+		runStyleToColourMap.put("highlightyellow1", "yellow");
+		runStyleToColourMap.put("highlightgreen1", "lime");
+		runStyleToColourMap.put("highlightcyan1", "aqua");
+		runStyleToColourMap.put("highlightmagenta1", "magenta");
+		runStyleToColourMap.put("highlightblue1", "blue");
+		runStyleToColourMap.put("highlightred1", "red");
+		runStyleToColourMap.put("highlightdarkBlue1", "navy");
+		runStyleToColourMap.put("highlightdarkCyan1", "teal");
+		runStyleToColourMap.put("highlightdarkGreen1", "green");
+		runStyleToColourMap.put("highlightdarkMagenta1", "purple");
+		runStyleToColourMap.put("highlightdarkRed1", "maroon");
+		runStyleToColourMap.put("highlightdarkYellow1", "olive");
+		runStyleToColourMap.put("highlightdarkGray1", "gray");
+		runStyleToColourMap.put("highlightlightGray1", "silver");
+		runStyleToColourMap.put("highlightblack1", "black");
+	}
+
+	private String runStyleToHighlightColour(String style) {
+		return runStyleToColourMap.get(style);
+	}
+
 	@Override
 	public String getHighlight() {
 		for (MyElement element : elements) {
 			String highlight = element.getHighlight();
+			if (highlight != null) {
+				return highlight;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getRunStyle() {
+		for (MyElement element : elements) {
+			String highlight = element.getRunStyle();
 			if (highlight != null) {
 				return highlight;
 			}

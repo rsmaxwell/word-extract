@@ -1,5 +1,8 @@
 package com.rsmaxwell.extractor.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class MyElement implements MyNode {
 
 	protected static final String LS = System.getProperty("line.separator");
@@ -14,6 +17,10 @@ public abstract class MyElement implements MyNode {
 	}
 
 	public String getHighlight() {
+		return null;
+	}
+
+	public String getRunStyle() {
 		return null;
 	}
 
@@ -43,5 +50,9 @@ public abstract class MyElement implements MyNode {
 
 	public String getVerticalAlign() {
 		return null;
+	}
+
+	public List<String> getPictures() {
+		return new ArrayList<String>();
 	}
 }

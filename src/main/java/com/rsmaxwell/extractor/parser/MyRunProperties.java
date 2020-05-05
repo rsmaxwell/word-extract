@@ -54,6 +54,8 @@ public class MyRunProperties extends MyElement {
 				} else if ("w:iCs".contentEquals(nodeName)) {
 					// ok
 				} else if ("w:rStyle".contentEquals(nodeName)) {
+					runProperties.elements.add(MyRunStyle.create(childElement, level + 1));
+				} else if ("w:noProof".contentEquals(nodeName)) {
 					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
@@ -73,6 +75,17 @@ public class MyRunProperties extends MyElement {
 	public String getHighlight() {
 		for (MyElement element : elements) {
 			String highlight = element.getHighlight();
+			if (highlight != null) {
+				return highlight;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getRunStyle() {
+		for (MyElement element : elements) {
+			String highlight = element.getRunStyle();
 			if (highlight != null) {
 				return highlight;
 			}

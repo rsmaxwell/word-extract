@@ -1,5 +1,6 @@
 package com.rsmaxwell.extractor.parser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,28 @@ public class MyParagraph extends MyElement {
 		for (MyRun run : runs) {
 			sb.append(run.toHtml());
 		}
+		String html = sb.toString().trim();
+
+		List<String> allPictures = new ArrayList<String>();
+		for (MyRun run : runs) {
+			List<String> pictures = run.getPictures();
+			allPictures.addAll(pictures);
+		}
+
+		if (allPictures.isEmpty()) {
+			return "<p>" + html + "</p>" + LS;
+		}
+		File file = new File(allPictures.get(0));
+		String name = file.getName();
+		File parent = file.getParentFile();
+		String parentName = parent.getName();
+		String image = parentName + "/" + name;
+
+		sb = new StringBuilder();
+		sb.append("<figure> + LS");
+		sb.append("  <img src=\"" + image + "\" width=\"600px\" /> + LS");
+		sb.append("  <figcaption>" + html + "</figcaption> + LS");
+		sb.append("</figure> + LS");
 
 		return sb.toString();
 	}

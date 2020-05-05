@@ -33,17 +33,15 @@ public class MyBreak extends MyElement {
 	@Override
 	public String toString() {
 
-		String eol = System.getProperty("line.separator");
-
 		StringBuilder sb = new StringBuilder();
 
 		switch (type) {
 		case NORMAL:
 			break;
 		case PAGE:
-			sb.append(eol);
+			sb.append(LS);
 			sb.append("--------------------------------------------------------------");
-			sb.append(eol);
+			sb.append(LS);
 		}
 
 		return sb.toString();
