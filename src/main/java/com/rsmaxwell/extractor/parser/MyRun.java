@@ -145,13 +145,16 @@ public class MyRun extends MyElement {
 			sb2.append("<font ");
 
 			if (size != null) {
+				int wordFontSize = Integer.parseInt(size);
+				if (wordFontSize != 24) {
 
-				double wordFontSize = Integer.parseInt(size);
-				double point = wordFontSize / 8.0;
-				String pointString = String.format("%.1f", point);
+					double wordFontSize2 = wordFontSize;
+					double point = wordFontSize2 / 8.0;
+					String pointString = String.format("%.1f", point);
 
-				sb2.append(separator + "size=" + pointString + "pt");
-				separator = " ";
+					sb2.append(separator + "size=" + pointString + "pt");
+					separator = " ";
+				}
 			}
 
 			if (colour != null) {
