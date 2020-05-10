@@ -8,9 +8,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.rsmaxwell.extractor.relationships.Relationships;
+
 public class MyParagraph extends MyElement {
 
-	private List<MyRun> runs = new ArrayList<MyRun>();
+	private List<MyElement> elements = new ArrayList<MyElement>();
 
 	public static MyParagraph create(Element element, int level) throws Exception {
 
@@ -24,17 +26,17 @@ public class MyParagraph extends MyElement {
 			if (nodeType == Node.ELEMENT_NODE) {
 				Element childElement = (Element) child;
 				String nodeName = child.getNodeName();
-				if ("w:r".contentEquals(nodeName)) {
-					paragraph.runs.add(MyRun.create(childElement, level + 1));
-				} else if ("w:pPr".contentEquals(nodeName)) {
+				if ("w:r".equals(nodeName)) {
+					paragraph.elements.add(MyRun.create(childElement, level + 1));
+				} else if ("w:pPr".equals(nodeName)) {
 					// ok
-				} else if ("w:proofErr".contentEquals(nodeName)) {
+				} else if ("w:proofErr".equals(nodeName)) {
 					// ok
-				} else if ("w:bookmarkStart".contentEquals(nodeName)) {
+				} else if ("w:bookmarkStart".equals(nodeName)) {
 					// ok
-				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
+				} else if ("w:bookmarkEnd".equals(nodeName)) {
 					// ok
-				} else if ("w:hyperlink".contentEquals(nodeName)) {
+				} else if ("w:hyperlink".equals(nodeName)) {
 					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
@@ -46,37 +48,46 @@ public class MyParagraph extends MyElement {
 	}
 
 	@Override
-	public String toHtml() {
+	public Html toHtml() {
 
-		StringBuilder sb = new StringBuilder();
+		Relationships relationships = null;
 
-		for (MyRun run : runs) {
-			sb.append(run.toHtml());
+		String picture = getPicture();
+
+		if (picture == null) {
+			StringBuilder sb = new StringBuilder();
+			for (MyElement element : elements) {
+				sb.append(element.toHtml());
+			}
+			String body = sb.toString().trim();
+			String html = "<p>" + body + "</p>" + LS;
+			return new Html(html, body.length());
 		}
-		String html = sb.toString().trim();
 
-		List<String> allPictures = new ArrayList<String>();
-		for (MyRun run : runs) {
-			List<String> pictures = run.getPictures();
-			allPictures.addAll(pictures);
-		}
+		String id = getHyperlinkId();
+		String link = relationships.get(id);
 
-		if (allPictures.isEmpty()) {
-			return "<p>" + html + "</p>" + LS;
-		}
-		File file = new File(allPictures.get(0));
+		File file = new File(picture);
 		String name = file.getName();
 		File parent = file.getParentFile();
 		String parentName = parent.getName();
 		String image = parentName + "/" + name;
 
-		sb = new StringBuilder();
-		sb.append("<figure> + LS");
-		sb.append("  <img src=\"" + image + "\" width=\"600px\" /> + LS");
-		sb.append("  <figcaption>" + html + "</figcaption> + LS");
-		sb.append("</figure> + LS");
+		StringBuilder sb = new StringBuilder();
+		String pad = "";
+		if (link != null) {
+			sb.append("  <a href=\"" + link + "\" >" + LS);
+			pad = "  ";
+		}
+		sb.append(pad + "  <img src=\"" + image + "\" width=\"600px\" />" + LS);
+		sb.append(pad + "  <figcaption>" + toString() + "</figcaption>" + LS);
+		if (link != null) {
+			sb.append("  </a>" + LS);
+		}
 
-		return sb.toString();
+		String body = sb.toString();
+		String html = "<figure>" + LS + body + "</figure>" + LS;
+		return new Html(html, body.length());
 	}
 
 	@Override
@@ -84,10 +95,36 @@ public class MyParagraph extends MyElement {
 
 		StringBuilder sb = new StringBuilder();
 
-		for (MyRun run : runs) {
-			sb.append(run.toString());
+		for (MyElement element : elements) {
+			sb.append(element.toString());
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public String getPicture() {
+
+		for (MyElement element : elements) {
+			String picture = element.getPicture();
+			if (picture != null) {
+				return picture;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getHyperlinkId() {
+
+		for (MyElement element : elements) {
+			String hyperlink = element.getHyperlinkId();
+			if (hyperlink != null) {
+				return hyperlink;
+			}
+		}
+
+		return null;
 	}
 }

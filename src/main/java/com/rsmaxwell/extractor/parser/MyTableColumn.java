@@ -79,6 +79,7 @@ public class MyTableColumn {
 		List<String> lines = new ArrayList<String>();
 
 		int paragraphCount = 0;
+		int length = 0;
 		StringBuilder sb = new StringBuilder();
 		for (MyElement element : elements) {
 
@@ -86,12 +87,15 @@ public class MyTableColumn {
 				if (paragraphCount > 0) {
 					lines.add(sb.toString());
 					sb.setLength(0);
+					length = 0;
 				}
 				paragraphCount++;
 			}
-			sb.append(element.toHtml());
+			Html html = element.toHtml();
+			sb.append(html.getHtml());
+			length += html.getLength();
 		}
-		if (sb.length() > 0) {
+		if (length > 0) {
 			lines.add(sb.toString());
 		}
 

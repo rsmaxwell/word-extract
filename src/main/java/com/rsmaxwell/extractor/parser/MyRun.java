@@ -37,6 +37,10 @@ public class MyRun extends MyElement {
 					// ok
 				} else if ("w:drawing".contentEquals(nodeName)) {
 					run.elements.add(MyDrawing.create(childElement, level + 1));
+				} else if ("w:fldChar".contentEquals(nodeName)) {
+					// ok
+				} else if ("w:instrText".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
@@ -47,15 +51,16 @@ public class MyRun extends MyElement {
 	}
 
 	@Override
-	public List<String> getPictures() {
+	public String getPicture() {
 
-		List<String> allPictures = new ArrayList<String>();
 		for (MyElement element : elements) {
-			List<String> picture = element.getPictures();
-			allPictures.addAll(picture);
+			String picture = element.getPicture();
+			if (picture != null) {
+				return picture;
+			}
 		}
 
-		return allPictures;
+		return null;
 	}
 
 	@Override
@@ -71,13 +76,12 @@ public class MyRun extends MyElement {
 	}
 
 	@Override
-	public String toHtml() {
-
-		StringBuilder sb = new StringBuilder();
+	public Html toHtml() {
 
 		// --------------------------------------------
 		// Get the text string for this run
 		// --------------------------------------------
+		StringBuilder sb = new StringBuilder();
 		for (MyElement element : elements) {
 			sb.append(element.toString());
 		}
@@ -104,11 +108,9 @@ public class MyRun extends MyElement {
 		if (runStyle != null) {
 			String colour = runStyleToHighlightColour(runStyle);
 
-			if (colour == null) {
-				throw new RuntimeException("unexpected runStyle value: " + runStyle);
+			if (colour != null) {
+				text = "<span class=highlight_" + colour + ">" + text + "</span>";
 			}
-
-			text = "<span class=highlight_" + colour + ">" + text + "</span>";
 		}
 
 		// --------------------------------------------
@@ -208,7 +210,7 @@ public class MyRun extends MyElement {
 		// --------------------------------------------
 		// Return the text string
 		// --------------------------------------------
-		return text;
+		return new Html(text, sb.length());
 	}
 
 	private static Map<String, String> colours = new HashMap<String, String>();
@@ -254,7 +256,7 @@ public class MyRun extends MyElement {
 		runStyleToColourMap.put("highlightblack1", "black");
 	}
 
-	private String runStyleToHighlightColour(String style) {
+	public static String runStyleToHighlightColour(String style) {
 		return runStyleToColourMap.get(style);
 	}
 

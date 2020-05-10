@@ -169,32 +169,12 @@ public class MyTableRow extends MyElement {
 	}
 
 	private String buildLine(List<String> array) throws Exception {
-		String line = null;
-		String separator = " ";
-		for (int i = 0; i < array.size(); i++) {
-			String next = array.get(i);
-			if (next.length() == 0) {
-				separator = "</p>" + LS + "<p>";
-			} else {
-				line = join(line, next, separator);
-				separator = " ";
-			}
+
+		StringBuffer sb = new StringBuffer();
+		for (String string : array) {
+			sb.append(string);
 		}
 
-		if (line == null) {
-			return null;
-		} else if (line.length() == 0) {
-			throw new Exception("Empty paragraph");
-		} else {
-			return "<p>" + line + "</p>" + LS;
-		}
-	}
-
-	private String join(String one, String two, String separator) throws Exception {
-		if (one == null) {
-			return two.trim();
-		}
-
-		return one.trim() + separator + two.trim();
+		return sb.toString();
 	}
 }

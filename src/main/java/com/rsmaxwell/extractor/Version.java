@@ -4,7 +4,7 @@ public class Version {
 
 	// version function
 	public static String version() {
-		return "<EXTRACTOR_VERSION>";
+		return "<VERSION>";
 	}
 
 	// buildID function

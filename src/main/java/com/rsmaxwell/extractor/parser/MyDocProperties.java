@@ -23,11 +23,7 @@ public class MyDocProperties extends MyElement {
 	}
 
 	@Override
-	public List<String> getPictures() {
-
-		List<String> allPictures = new ArrayList<String>();
-		allPictures.add(descr);
-
-		return allPictures;
+	public String getPicture() {
+		return descr;
 	}
 }

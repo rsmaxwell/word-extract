@@ -85,9 +85,9 @@ public class MyRunProperties extends MyElement {
 	@Override
 	public String getRunStyle() {
 		for (MyElement element : elements) {
-			String highlight = element.getRunStyle();
-			if (highlight != null) {
-				return highlight;
+			String style = element.getRunStyle();
+			if (style != null) {
+				return style;
 			}
 		}
 		return null;

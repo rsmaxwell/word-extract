@@ -43,14 +43,15 @@ public class MyInline extends MyElement {
 	}
 
 	@Override
-	public List<String> getPictures() {
+	public String getPicture() {
 
-		List<String> allPictures = new ArrayList<String>();
 		for (MyElement element : elements) {
-			List<String> picture = element.getPictures();
-			allPictures.addAll(picture);
+			String picture = element.getPicture();
+			if (picture != null) {
+				return picture;
+			}
 		}
 
-		return allPictures;
+		return null;
 	}
 }

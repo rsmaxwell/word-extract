@@ -37,6 +37,8 @@ public class MyBody {
 					// ok
 				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:bookmarkStart".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}

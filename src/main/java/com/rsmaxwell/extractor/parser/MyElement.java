@@ -1,8 +1,5 @@
 package com.rsmaxwell.extractor.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class MyElement implements MyNode {
 
 	protected static final String LS = System.getProperty("line.separator");
@@ -12,8 +9,8 @@ public abstract class MyElement implements MyNode {
 		return "";
 	}
 
-	public String toHtml() {
-		return "";
+	public Html toHtml() {
+		return new Html("", 0);
 	}
 
 	public String getHighlight() {
@@ -52,7 +49,11 @@ public abstract class MyElement implements MyNode {
 		return null;
 	}
 
-	public List<String> getPictures() {
-		return new ArrayList<String>();
+	public String getPicture() {
+		return null;
+	}
+
+	public String getHyperlinkId() {
+		return null;
 	}
 }
