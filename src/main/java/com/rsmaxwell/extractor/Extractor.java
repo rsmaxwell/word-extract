@@ -32,15 +32,21 @@ public class Extractor {
 	public String imageFilename;
 	public String diary;
 
+	private String wordFileName;
+	private File wordFile;
+
 	private String workingDirName;
 	private File workingDir;
 
-	private String baseDirName;
+	public String baseDirName;
 	private File fragmentBase;
 
 	public static Extractor instance;
 
-	public Extractor(String outputDirName) {
+	public Extractor(String wordFileName, String outputDirName) {
+
+		this.wordFileName = wordFileName;
+		wordFile = new File(wordFileName);
 
 		this.workingDirName = outputDirName + "/working";
 		workingDir = new File(workingDirName);
@@ -50,30 +56,33 @@ public class Extractor {
 		fragmentBase.mkdirs();
 	}
 
-	public void unzip(File archive) throws IOException {
+	public void summary() throws IOException {
+		System.out.println("Extractor: " + Version.version());
+		System.out.println("Reading: " + wordFile.getCanonicalPath());
+		System.out.println("Writing: " + fragmentBase.getCanonicalPath());
+	}
+
+	public void unzip() throws IOException {
 
 		clearWorkingDirectory(workingDir);
 
 		byte[] buffer = new byte[1024];
-		ZipInputStream zis = new ZipInputStream(new FileInputStream(archive));
+		ZipInputStream zis = new ZipInputStream(new FileInputStream(wordFile));
 		ZipEntry zipEntry = zis.getNextEntry();
 		while (zipEntry != null) {
 
-			if ("word/document.xml".contentEquals(zipEntry.getName())) {
+			String filename = workingDirName + "/" + zipEntry.getName();
+			File file = new File(filename);
+			File parentFolder = new File(file.getParent());
+			parentFolder.mkdirs();
 
-				String filename = workingDirName + "/" + zipEntry.getName();
-				File file = new File(filename);
-				File parentFolder = new File(file.getParent());
-				parentFolder.mkdirs();
-
-				File newFile = newFile(workingDir, zipEntry);
-				FileOutputStream fos = new FileOutputStream(newFile);
-				int len;
-				while ((len = zis.read(buffer)) > 0) {
-					fos.write(buffer, 0, len);
-				}
-				fos.close();
+			File newFile = newFile(workingDir, zipEntry);
+			FileOutputStream fos = new FileOutputStream(newFile);
+			int len;
+			while ((len = zis.read(buffer)) > 0) {
+				fos.write(buffer, 0, len);
 			}
+			fos.close();
 
 			zipEntry = zis.getNextEntry();
 		}

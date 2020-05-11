@@ -57,7 +57,8 @@ public class MyParagraph extends MyElement {
 		if (picture == null) {
 			StringBuilder sb = new StringBuilder();
 			for (MyElement element : elements) {
-				sb.append(element.toHtml());
+				Html html = element.toHtml();
+				sb.append(html.getHtml());
 			}
 			String body = sb.toString().trim();
 			String html = "<p>" + body + "</p>" + LS;

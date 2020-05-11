@@ -125,16 +125,17 @@ public class App {
 		}
 		String imageFilename = line.getOptionValue("i", "");
 
-		Extractor extractor = new Extractor(outputDirName);
-		Extractor.instance = extractor;
-
-		String wordPathName = rootDirName + "/" + diary + "/metadata/word/" + wordFilename;
-		File wordFile = new File(wordPathName);
+		String wordFileName = rootDirName + "/" + diary + "/metadata/word/" + wordFilename;
+		File wordFile = new File(wordFileName);
 		if (!wordFile.exists()) {
-			throw new Exception("file not found: " + wordPathName);
+			throw new Exception("file not found: " + wordFileName);
 		}
 
-		extractor.unzip(wordFile);
+		Extractor extractor = new Extractor(wordFileName, outputDirName);
+		Extractor.instance = extractor;
+
+		extractor.summary();
+		extractor.unzip();
 		extractor.toJson(wordFilename, diary, imageFilename);
 	}
 }
