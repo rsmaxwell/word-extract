@@ -113,6 +113,9 @@ public class MyTableRow extends MyElement {
 					String string = matcher.group(1);
 					int dayOfWeek = Day.toInt(string);
 					Day.check(extractor.year, extractor.month, extractor.day, dayOfWeek);
+				} else {
+					String message = "Unexpected day-of-week: " + line;
+					throw new Exception(message);
 				}
 			} catch (Exception e) {
 				StringBuilder sb = new StringBuilder();
