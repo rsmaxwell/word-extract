@@ -58,6 +58,7 @@ public class Extractor {
 
 	public void summary() throws IOException {
 		System.out.println("Extractor: " + Version.version());
+		System.out.println("diaryjson: " + com.rsmaxwell.diaryjson.Version.version());
 		System.out.println("Reading: " + wordFile.getCanonicalPath());
 		System.out.println("Writing: " + fragmentBase.getCanonicalPath());
 	}
