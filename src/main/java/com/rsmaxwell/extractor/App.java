@@ -12,7 +12,20 @@ import org.apache.commons.cli.ParseException;
 
 public class App {
 
-	private static CommandLine getCommandLine(String[] args) throws ParseException {
+	public static void main(String[] args) throws Exception {
+		try {
+			App app = new App();
+			app.run(args);
+		} catch (AppException e) {
+			System.out.println(e.getMessage());
+			System.exit(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(2);
+		}
+	}
+
+	private CommandLine getCommandLine(String[] args) throws ParseException {
 
 		// @formatter:off
 		Option version = Option.builder("v")
@@ -99,50 +112,45 @@ public class App {
 		return line;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public void run(String[] args) throws Exception {
 
 		CommandLine line = getCommandLine(args);
 
 		if (!line.hasOption('r')) {
-			System.out.println("Missing required option -r | --root");
-			return;
+			throw new AppException("Missing required option -r | --root");
 		}
 
 		if (!line.hasOption('p')) {
-			System.out.println("Missing required option -p | --path");
-			return;
+			throw new AppException("Missing required option -p | --path");
 		}
 		String rootDirName = line.getOptionValue("r");
 		String pathDirName = line.getOptionValue("r");
 		File rootPathDir = new File(rootDirName, pathDirName);
 		if (!rootPathDir.exists()) {
-			throw new Exception("file not found: " + rootPathDir);
+			throw new AppException("file not found: " + rootPathDir);
 		}
 
 		if (!line.hasOption('w')) {
-			System.out.println("Missing required option -w | --wordFile");
-			return;
+			throw new AppException("Missing required option -w | --wordFile");
 		}
 		String wordFilename = line.getOptionValue("w");
 
 		String outputDirName = line.getOptionValue("o", "output");
 
 		if (!line.hasOption('d')) {
-			System.out.println("Missing required option -d | --diary");
-			return;
+			throw new AppException("Missing required option -d | --diary");
 		}
 		String diary = line.getOptionValue("d", "");
 
 		if (!line.hasOption('i')) {
-			System.out.println("Missing required option -i | --imageFilename");
-			return;
+			throw new AppException("Missing required option -i | --imageFilename");
 		}
 		String imageFilename = line.getOptionValue("i", "");
 
 		String wordFileName = rootDirName + "/" + pathDirName + "/" + diary + "/metadata/word/" + wordFilename;
 		File wordFile = new File(wordFileName);
 		if (!wordFile.exists()) {
-			throw new Exception("file not found: " + wordFileName);
+			throw new AppException("file not found: " + wordFileName);
 		}
 
 		Extractor extractor = new Extractor(wordFileName, outputDirName);
