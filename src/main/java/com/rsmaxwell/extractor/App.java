@@ -124,10 +124,10 @@ public class App {
 			throw new AppException("Missing required option -p | --path");
 		}
 		String rootDirName = line.getOptionValue("r");
-		String pathDirName = line.getOptionValue("r");
+		String pathDirName = line.getOptionValue("p");
 		File rootPathDir = new File(rootDirName, pathDirName);
 		if (!rootPathDir.exists()) {
-			throw new AppException("file not found: " + rootPathDir);
+			throw new AppException("file not found: " + rootPathDir.getCanonicalPath());
 		}
 
 		if (!line.hasOption('w')) {
