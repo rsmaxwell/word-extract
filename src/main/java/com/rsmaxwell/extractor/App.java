@@ -47,7 +47,7 @@ public class App {
 				            .desc("root directory")
 				            .build();
 
-		Option pathDir = Option.builder("r")
+		Option pathDir = Option.builder("p")
 				            .longOpt("path")
 				            .argName("path directory")
 				            .hasArg()
