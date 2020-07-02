@@ -34,6 +34,13 @@ public class App {
 				            .desc("root directory")
 				            .build();
 
+		Option pathDir = Option.builder("r")
+				            .longOpt("path")
+				            .argName("path directory")
+				            .hasArg()
+				            .desc("path directory")
+				            .build();
+
 		Option wordFile = Option.builder("w")
 	                        .longOpt("word")
 	                        .argName("word file")
@@ -67,6 +74,7 @@ public class App {
 		options.addOption(version);
 		options.addOption(help);
 		options.addOption(rootDir);
+		options.addOption(pathDir);
 		options.addOption(wordFile);
 		options.addOption(diary);
 		options.addOption(imageFile);
@@ -99,10 +107,16 @@ public class App {
 			System.out.println("Missing required option -r | --root");
 			return;
 		}
+
+		if (!line.hasOption('p')) {
+			System.out.println("Missing required option -p | --path");
+			return;
+		}
 		String rootDirName = line.getOptionValue("r");
-		File rootDir = new File(rootDirName);
-		if (!rootDir.exists()) {
-			throw new Exception("file not found: " + rootDirName);
+		String pathDirName = line.getOptionValue("r");
+		File rootPathDir = new File(rootDirName, pathDirName);
+		if (!rootPathDir.exists()) {
+			throw new Exception("file not found: " + rootPathDir);
 		}
 
 		if (!line.hasOption('w')) {
@@ -125,7 +139,7 @@ public class App {
 		}
 		String imageFilename = line.getOptionValue("i", "");
 
-		String wordFileName = rootDirName + "/" + diary + "/metadata/word/" + wordFilename;
+		String wordFileName = rootDirName + "/" + pathDirName + "/" + diary + "/metadata/word/" + wordFilename;
 		File wordFile = new File(wordFileName);
 		if (!wordFile.exists()) {
 			throw new Exception("file not found: " + wordFileName);
