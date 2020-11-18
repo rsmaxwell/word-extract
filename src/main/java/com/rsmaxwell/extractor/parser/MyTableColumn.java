@@ -32,6 +32,8 @@ public class MyTableColumn {
 					tableColumn.elements.add(MyParagraph.create(childElement, level + 1));
 				} else if ("w:bookmarkEnd".contentEquals(nodeName)) {
 					// ok
+				} else if ("w:tbl".contentEquals(nodeName)) {
+					// ok
 				} else {
 					throw new Exception("unexpected element: " + nodeName);
 				}
